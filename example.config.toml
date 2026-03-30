@@ -1,0 +1,14 @@
+[web]
+port = 8080 # The port the website will listen to.
+
+[security]
+cookieMasterKey = "" # The master key for the cookie encryptsion.
+cookieEncoding = "hex" # hex, base64, latin1
+cookiePBKDF2Iterations = 25670 # The PBKDF2Iterations for the cookie encryption.
+cookieSaltLength = 25 # The length of the cookie salt.
+
+[database] # MongoDB
+clusterURL = "" # The database cluster URI.
+databaseName = "main1" # The name of the database where the collections reside.
+usersCollection = "tradegodly.users" # The name of the collection where users data will be stored.
+tradesCollection = "tradegodly.trades"  # The name of the collection where trades data will be stored.

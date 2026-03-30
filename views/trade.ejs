@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trade Overview - TradeGodly</title>
+         <meta property="og:url" content="https://tradegodly.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <meta property="og:title" content="Trade Overview - TradeGodly">
+    <meta property="og:image" content="assets/img/logo.png">
+    <meta name="theme-color" content="#00008B">
+    <meta name="description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        /* ── Tokens ── */
+        :root {
+            --bg: #0e1117;
+            --surface: #161b27;
+            --surface-2: #1c2333;
+            --border: #1e2a3a;
+            --text: #e2e8f0;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
+            --accent: #3b82f6;
+            --accent-dim: rgba(59, 130, 246, 0.12);
+            --green: #22c55e;
+            --red: #ef4444;
+            --radius: 8px;
+            --transition: 0.18s ease;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            height: 58px;
+            background: rgba(14, 17, 23, 0.92);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 24px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-brand {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .user-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .user-dropdown-btn:hover .username {
+            color: var(--accent);
+        }
+
+        .username {
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color var(--transition);
+        }
+
+        .profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            min-width: 150px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 200;
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: block;
+            text-align: left;
+            border: none;
+            background: transparent;
+            width: 100%;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: var(--border);
+        }
+
+        /* ── LAYOUT ── */
+        .layout-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .layout-body {
+                display: block;
+                overflow: visible;
+            }
+            body {
+                overflow-y: auto;
+                height: auto;
+            }
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 240px;
+            background: var(--bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0.75rem;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            color: var(--text);
+            background: var(--surface-2);
+        }
+
+        .sidebar-link.active {
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .sidebar-link svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        .hr {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0.5rem;
+        }
+
+        /* SIDEBAR DROPDOWN */
+        .sidebar-dropdown-btn {
+            justify-content: space-between;
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+        }
+
+        .sidebar-dropdown-btn .left-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chevron {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s;
+        }
+
+        .sidebar-dropdown-menu {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            padding-left: 26px;
+            margin-top: 4px;
+        }
+
+        .sidebar-dropdown-menu.show {
+            display: flex;
+        }
+
+        .sidebar-dropdown-btn.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .backtrack-header {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 0.5rem;
+            }
+        }
+
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+        }
+
+        .info-card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1.25rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-card h2 svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--accent);
+        }
+
+        .info-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .info-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.05em;
+        }
+
+        .info-value {
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .badge.long {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .badge.short {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+        }
+
+        .badge.win {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+        }
+
+        .badge.lose {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        .text-green {
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .text-red {
+            color: #f87171;
+            font-weight: 600;
+        }
+
+        .notes-card {
+            grid-column: 1 / -1;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            transition: color var(--transition);
+        }
+
+        .back-btn:hover {
+            color: var(--text);
+        }
+
+        .edit-input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        .edit-mode-btn {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .edit-mode-btn:hover {
+            color: var(--text);
+            background: var(--border);
+        }
+
+        .edit-mode-btn.save {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* ── Markdown Styles ── */
+        .markdown-body {
+            line-height: 1.6;
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        .markdown-body h1,
+        .markdown-body h2,
+        .markdown-body h3 {
+            color: var(--text);
+            margin: 1.25rem 0 0.75rem;
+            font-weight: 600;
+        }
+
+        .markdown-body h1 {
+            font-size: 1.4rem;
+        }
+
+        .markdown-body h2 {
+            font-size: 1.2rem;
+        }
+
+        .markdown-body h3 {
+            font-size: 1.05rem;
+        }
+
+        .markdown-body p {
+            margin-bottom: 1rem;
+        }
+
+        .markdown-body ul,
+        .markdown-body ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        .markdown-body li {
+            margin-bottom: 0.25rem;
+        }
+
+        .markdown-body strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .markdown-body code {
+            background: var(--surface-2);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .markdown-body blockquote {
+            border-left: 3px solid var(--accent);
+            padding-left: 1rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="/" class="nav-left">
+            <div class="nav-logo">
+                <img src="/assets/img/logo.png" alt="TradeGodly"
+                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='" />
+            </div>
+            <span class="nav-brand">TradeGodly</span>
+        </a>
+
+        <div class="nav-right">
+            <button class="user-dropdown-btn" id="user-menu-btn" aria-haspopup="true" aria-expanded="false">
+                <span class="username" style="font-weight: bold;">
+                    <%= username.charAt(0).toUpperCase() + username.slice(1) %>
+                </span>
+                <img src="<%= typeof user !== 'undefined' && user.avatar ? user.avatar : '/assets/img/logo.png' %>"
+                    alt="Profile" class="profile-pic"
+                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='" />
+            </button>
+            <div class="dropdown-menu" id="user-dropdown">
+                <a href="#" class="dropdown-item" onclick="if(confirm('Are you sure you want to delete your account? This action is IRREVERSIBLE and will delete all your data.')) window.location.href='/delete-account'; return false;" style="color: #f87171;">Delete Account</a>
+                <a href="/logout" class="dropdown-item">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout-body">
+        <%- include('partials/sidebar') %>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <a href="/trades" class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Trades
+            </a>
+
+            <h1 style="margin-bottom: 2rem; font-size: 1.4rem;">Trade Overview</h1>
+
+            <div class="grid-container">
+                <!-- Summary Card -->
+                <div class="info-card">
+                    <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg> Result Summary</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="info-group">
+                            <span class="info-label">Asset</span>
+                            <span class="info-value">
+                                <%= trade.asset.toUpperCase() %>
+                            </span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Status</span>
+                            <span class="badge <%= trade.status.toLowerCase() %>">
+                                <%= trade.status %>
+                            </span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Type</span>
+                            <span class="badge <%= trade.type.toLowerCase() %>">
+                                <%= trade.type %>
+                            </span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Profit/Loss</span>
+                            <% let retVal=parseFloat(trade.ret) || 0; let colorClass=trade.status==="WIN" ? 'text-green'
+                                : 'text-red' ; let sign=trade.status==="WIN" ? '+' : '-' ; %>
+                                <span class="info-value <%= colorClass %>">
+                                    <%= sign %>$<%= Math.abs(retVal).toFixed(2) %>
+                                </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Execution Details -->
+                <div class="info-card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                        <h2 style="margin-bottom: 0;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg> Execution</h2>
+                        <button id="editExecutionBtn" class="edit-mode-btn">Edit</button>
+                    </div>
+                    <div id="executionView" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="info-group">
+                            <span class="info-label">Date</span>
+                            <span class="info-value">
+                                <%= new Date(trade.date).toLocaleDateString('en-US', { month: 'long' , day: 'numeric' ,
+                                    year: 'numeric' , timeZone: 'UTC' }) %>
+                            </span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Entry Time</span>
+                            <span class="info-value">
+                                <%= trade.entryTime || '00:00:00' %>
+                            </span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Exit Time</span>
+                            <span class="info-value">
+                                <%= trade.exitTime || '00:00:00' %>
+                            </span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Timeframe</span>
+                            <span class="info-value">
+                                <%= trade.timeframe || '1h' %>
+                            </span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Timezone</span>
+                            <span class="info-value">
+                                <%= trade.timezone || 'UTC' %>
+                            </span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Quantity</span>
+                            <span class="info-value">
+                                <%= trade.qty %>
+                            </span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Hold duration</span>
+                            <span class="info-value">
+                                <%= trade.hold %>
+                            </span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Session</span>
+                            <span class="info-value">
+                                <%= trade.session || 'N/A' %>
+                            </span>
+                        </div>
+                    </div>
+                    <div id="executionEdit" style="display: none; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <input type="hidden" id="tradeId" value="<%= trade._id %>">
+                        <div class="info-group">
+                            <span class="info-label">Date</span>
+                            <input type="date" id="editDate" class="edit-input"
+                                value="<%= new Date(trade.date).toISOString().split('T')[0] %>">
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Entry Time</span>
+                            <input type="text" id="editEntryTime" class="edit-input"
+                                value="<%= trade.entryTime || '00:00:00' %>">
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Exit Time</span>
+                            <input type="text" id="editExitTime" class="edit-input"
+                                value="<%= trade.exitTime || '00:00:00' %>">
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Timeframe</span>
+                            <select id="editTimeframe" class="edit-input">
+                                <option value="1m" <%=trade.timeframe==='1m' ? 'selected' : '' %>>1m</option>
+                                <option value="3m" <%=trade.timeframe==='3m' ? 'selected' : '' %>>3m</option>
+                                <option value="5m" <%=trade.timeframe==='5m' ? 'selected' : '' %>>5m</option>
+                                <option value="15m" <%=trade.timeframe==='15m' ? 'selected' : '' %>>15m</option>
+                                <option value="30m" <%=trade.timeframe==='30m' ? 'selected' : '' %>>30m</option>
+                                <option value="1h" <%=trade.timeframe==='1h' || !trade.timeframe ? 'selected' : '' %>>1h
+                                </option>
+                                <option value="4h" <%=trade.timeframe==='4h' ? 'selected' : '' %>>4h</option>
+                                <option value="1d" <%=trade.timeframe==='1d' ? 'selected' : '' %>>1d</option>
+                            </select>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Timezone</span>
+                            <input type="text" id="editTimezone" class="edit-input"
+                                value="<%= trade.timezone || 'UTC' %>">
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Quantity</span>
+                            <input type="number" step="0.01" id="editQty" class="edit-input" value="<%= trade.qty %>">
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Hold duration</span>
+                            <input type="text" id="editHold" class="edit-input" value="<%= trade.hold %>">
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Session</span>
+                            <select id="editSession" class="edit-input">
+                                <option value="Sydney" <%=trade.session==='Sydney' ? 'selected' : '' %>>Sydney</option>
+                                <option value="Tokyo" <%=trade.session==='Tokyo' ? 'selected' : '' %>>Tokyo</option>
+                                <option value="London" <%=trade.session==='London' ? 'selected' : '' %>>London</option>
+                                <option value="New York" <%=trade.session==='New York' ? 'selected' : '' %>>New York
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Card -->
+                <div class="info-card">
+                    <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg> Pricing & Targets</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="info-group">
+                            <span class="info-label">Entry Price</span>
+                            <span class="info-value">$<%= parseFloat(trade.entry).toFixed(2) %></span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Exit Price</span>
+                            <span class="info-value">$<%= parseFloat(trade.exit).toFixed(2) %></span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Take Profit</span>
+                            <span class="info-value" style="color: var(--green);">$<%= parseFloat(trade.tp).toFixed(2)
+                                    %></span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Stop Loss</span>
+                            <span class="info-value" style="color: var(--red);">$<%= parseFloat(trade.sl).toFixed(2) %>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Summary Section -->
+                <div class="info-card notes-card"
+                    style="margin-bottom: 2rem; border-color: var(--accent-dim); background: linear-gradient(145deg, rgba(59, 130, 246, 0.05) 0%, rgba(22, 27, 39, 0) 100%), var(--surface);">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                        <h2 style="color: var(--accent); margin: 0; font-size: 1.1rem;">AI Trade Summary</h2>
+                    </div>
+                    <div id="aiSummaryContent" class="markdown-body">
+                        <!-- AI content will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Trade Backtrack (Chart) -->
+                <div class="info-card notes-card" style="margin-bottom: 2rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                            </svg> Trade Backtrack</h2>
+                        <% let entry=parseFloat(trade.entry); let sl=parseFloat(trade.sl); let tp=parseFloat(trade.tp);
+                            let exit=parseFloat(trade.exit); let rr="N/A" ; if (entry && sl && (entry !==sl)) {
+                            rr=(Math.abs(tp - entry) / Math.abs(entry - sl)).toFixed(2); } let diff=Math.abs(exit -
+                            entry).toFixed(2); let pnlClass=trade.status==="WIN" ? 'text-green' : 'text-red' ; %>
+                            <div style="display: flex; gap: 1rem; font-size: 0.8rem; font-weight: 500;">
+                                <span style="color: var(--text-dim);">R:R Ratio: <strong style="color: var(--accent);">
+                                        <%= rr==="N/A" ? "0.00" : rr %>
+                                    </strong></span>
+                                <span style="color: var(--text-dim);">Distance: <strong class="<%= pnlClass %>">
+                                        <%= diff %> pts
+                                    </strong></span>
+                            </div>
+                    </div>
+                    <div id="tv-backtrack-container"
+                        style="height: 450px; width: 100%; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: var(--bg);">
+                        <div id="tv_chart_container" style="height: 100%; width: 100%;"></div>
+                    </div>
+                    <div
+                        style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted);">
+                        <span>Chart displays historical data for <strong style="color: var(--text);">
+                                <%= trade.asset.toUpperCase() %>
+                            </strong></span>
+                        <span>Time: <strong style="color: var(--text);">
+                                <%= trade.entryTime || '00:00:00' %>
+                            </strong> (<%= trade.timezone || 'UTC' %>)</span>
+                    </div>
+                </div>
+
+                <!-- Notes & Screenshots Card -->
+                <div class="info-card notes-card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg> Notes & Analysis</h2>
+                        <div style="display: flex; background: var(--surface-2); border-radius: 6px; padding: 2px;">
+                            <button id="previewBtn" class="tab-btn active"
+                                style="padding: 4px 12px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; font-size: 0.75rem; border-radius: 4px; font-weight: 500;">Preview</button>
+                            <button id="editBtn" class="tab-btn"
+                                style="padding: 4px 12px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; font-size: 0.75rem; border-radius: 4px; font-weight: 500;">Edit</button>
+                        </div>
+                    </div>
+
+                    <div id="noteEditorContainer" style="display: none;">
+                        <textarea id="noteTextarea"
+                            style="width: 100%; height: 200px; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 1rem; border-radius: var(--radius); font-family: inherit; font-size: 0.9rem; resize: vertical; outline: none; line-height: 1.6;"><%= trade.note ? trade.note.content : '' %></textarea>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                            <span id="saveStatus" style="font-size: 0.75rem; color: var(--text-muted);">All changes
+                                saved</span>
+                        </div>
+                    </div>
+
+                    <div id="notePreviewContainer"
+                        style="min-height: 200px; background: rgba(22, 27, 39, 0.5); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; line-height: 1.6; color: var(--text-dim); overflow-y: auto;">
+                        <div id="markdownContent"></div>
+                    </div>
+
+                    <div style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h2 style="margin-bottom: 0; font-size: 1rem;"><svg viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg> Screenshots</h2>
+                            <label for="uploadScreenshot"
+                                style="background: var(--accent); color: #fff; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Upload
+                            </label>
+                            <input type="file" id="uploadScreenshot" accept="image/*" style="display: none;">
+                        </div>
+
+                        <div id="screenshotsGrid"
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+                            <% if (trade.note && trade.note.screenshots && trade.note.screenshots.length> 0) { %>
+                                <% trade.note.screenshots.forEach(function(img, index) { %>
+                                    <div class="screenshot-item"
+                                        style="position: relative; aspect-ratio: 16/9; border-radius: 6px; overflow: hidden; border: 1px solid var(--border);">
+                                        <img src="<%= img %>" class="zoomable-img"
+                                            style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" />
+                                        <button class="delete-screenshot-btn" data-index="<%= index %>"
+                                            style="position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.8); border: none; color: #fff; width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 1; transition: opacity 0.2s;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path
+                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <div id="noScreenshotsPlaceholder"
+                                                style="grid-column: 1 / -1; text-align: center; padding: 2.5rem; color: var(--text-muted); background: rgba(22, 27, 39, 0.3); border-radius: var(--radius); border: 1px dashed var(--border);">
+                                                No screenshots attached to this trade.
+                                            </div>
+                                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Image Modal (Zoom) -->
+    <div id="imageModal"
+        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <button id="closeImageModal"
+            style="position: absolute; top: 2rem; right: 2rem; background: none; border: none; color: #fff; cursor: pointer; transform: scale(1.5);"><svg
+                width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg></button>
+        <div
+            style="position: relative; max-width: 90%; max-height: 90%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <img id="modalImg"
+                style="max-width: 100%; max-height: 100%; transform: scale(1); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: zoom-in;" />
+
+            <div
+                style="position: absolute; bottom: -3rem; left: 50%; transform: translateX(-50%); display: flex; gap: 1rem;">
+                <button id="zoomOut"
+                    style="background: var(--surface-2); border: 1px solid var(--border); color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg
+                        width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg></button>
+                <button id="zoomIn"
+                    style="background: var(--surface-2); border: 1px solid var(--border); color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg
+                        width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+        // Trade Backtrack Analysis
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('tv_chart_container');
+            const assetName = '<%= trade.asset.toUpperCase() %>';
+            const tradeDateStr = '<%= trade.date %>'.includes('T') ? '<%= trade.date %>'.split('T')[0] : '<%= trade.date %>';
+            const entryTimeStr = '<%= trade.entryTime || "00:00:00" %>';
+            const exitTimeStr = '<%= trade.exitTime || "00:00:00" %>';
+            const timezoneStr = '<%= trade.timezone || "UTC" %>';
+
+            const getTimestamp = (dateStr, timeStr, tzStr) => {
+                const match = tzStr.match(/UTC([+-])(\d+)(?::(\d+))?/);
+                const offset = match ? (match[1] === '+' ? 1 : -1) * (parseInt(match[2]) * 3600 + parseInt(match[3] || "0") * 60) : 0;
+                return (new Date(`${dateStr} ${timeStr} UTC`).getTime() / 1000) - offset;
+            };
+
+            const utcEntryTs = getTimestamp(tradeDateStr, entryTimeStr, timezoneStr);
+            const utcExitTs = getTimestamp(tradeDateStr, exitTimeStr, timezoneStr);
+
+            // Parse User Timezone to get broker/display offset in seconds
+            const parseTzOffset = (tz) => {
+                const match = tz.match(/UTC([+-])(\d+)(?::(\d+))?/);
+                if (match) {
+                    const sign = match[1] === '+' ? 1 : -1;
+                    const hours = parseInt(match[2]);
+                    const mins = parseInt(match[3] || "0");
+                    return sign * (hours * 3600 + mins * 60);
+                }
+                return 0; // Default to UTC
+            };
+            const displayOffset = parseTzOffset(timezoneStr);
+
+            const entryPrice = parseFloat('<%= trade.entry %>');
+            const exitPrice = parseFloat('<%= trade.exit %>');
+            const tpPrice = parseFloat('<%= trade.tp %>');
+            const slPrice = parseFloat('<%= trade.sl %>');
+            const tradeStatus = '<%= trade.status %>';
+
+            // Create Chart
+            const chart = LightweightCharts.createChart(container, {
+                layout: {
+                    background: { color: '#0e1117' },
+                    textColor: '#94a3b8',
+                },
+                grid: {
+                    vertLines: { color: '#1e2a3a' },
+                    horzLines: { color: '#1e2a3a' },
+                },
+                crosshair: {
+                    mode: LightweightCharts.CrosshairMode.Normal,
+                },
+                rightPriceScale: {
+                    borderColor: '#1e2a3a',
+                },
+                timeScale: {
+                    borderColor: '#1e2a3a',
+                    timeVisible: true,
+                    secondsVisible: false,
+                },
+            });
+
+            const candlestickSeries = chart.addCandlestickSeries({
+                upColor: '#22c55e',
+                downColor: '#ef4444',
+                borderVisible: false,
+                wickUpColor: '#22c55e',
+                wickDownColor: '#ef4444',
+            });
+
+            try {
+                const timeframe = '<%= trade.timeframe || "1h" %>';
+                const response = await fetch(`/api/chart-data/${assetName}?interval=${timeframe}`);
+                const data = await response.json();
+
+                if (data && Array.isArray(data) && data.length > 0) {
+                    // Force the chart to show UTC labels by compensating for the browser's offset
+                    // If user browser is UTC+8, we shift the labels by -8h so UTC 5:00 shows as 5:00
+                    const compensationShift = displayOffset;
+
+                    const shiftedData = data.map(c => ({
+                        ...c,
+                        time: c.time + compensationShift
+                    }));
+
+                    candlestickSeries.setData(shiftedData);
+
+                    const markers = [];
+                    if (!isNaN(utcEntryTs)) {
+                        markers.push({
+                            time: utcEntryTs + compensationShift,
+                            position: 'belowBar',
+                            color: '#3b82f6',
+                            shape: 'arrowUp',
+                            text: 'ENTRY',
+                        });
+                    }
+                    if (!isNaN(utcExitTs)) {
+                        markers.push({
+                            time: utcExitTs + compensationShift,
+                            position: 'aboveBar',
+                            color: tradeStatus === 'WIN' ? '#22c55e' : '#ef4444',
+                            shape: 'arrowDown',
+                            text: 'EXIT',
+                        });
+                    }
+
+                    candlestickSeries.setMarkers(markers);
+
+                    // Add Price Lines
+                    if (!isNaN(entryPrice)) {
+                        candlestickSeries.createPriceLine({
+                            price: entryPrice,
+                            color: '#3b82f6',
+                            lineWidth: 2,
+                            lineStyle: LightweightCharts.LineStyle.Dotted,
+                            axisLabelVisible: true,
+                            title: 'ENTRY',
+                        });
+                    }
+                    if (!isNaN(exitPrice)) {
+                        candlestickSeries.createPriceLine({
+                            price: exitPrice,
+                            color: tradeStatus === 'WIN' ? '#22c55e' : '#ef4444',
+                            lineWidth: 2,
+                            lineStyle: LightweightCharts.LineStyle.Dotted,
+                            axisLabelVisible: true,
+                            title: 'EXIT',
+                        });
+                    }
+
+                    if (shiftedData.length > 0) {
+                        const targetTime = !isNaN(utcEntryTs) ? (utcEntryTs + compensationShift) : shiftedData[shiftedData.length - 1].time;
+                        // Find closest candle index for focusing
+                        let closestIdx = 0;
+                        let minDiff = Infinity;
+                        shiftedData.forEach((c, i) => {
+                            const diff = Math.abs(c.time - targetTime);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                closestIdx = i;
+                            }
+                        });
+
+                        chart.timeScale().scrollToPosition(closestIdx - (shiftedData.length / 2), false);
+                    }
+                } else {
+                    container.innerHTML = '<div style="display:flex; height:100%; align-items:center; justify-content:center; color:var(--text-muted);">Failed to load chart data for backtrack.</div>';
+                }
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<div style="display:flex; height:100%; align-items:center; justify-content:center; color:var(--text-muted);">Error loading backtrack data.</div>';
+            }
+
+            window.addEventListener('resize', () => {
+                chart.applyOptions({ width: container.clientWidth });
+            });
+        });
+
+        // Tab switching
+        const previewBtn = document.getElementById('previewBtn');
+        const editBtn = document.getElementById('editBtn');
+        const editorContainer = document.getElementById('noteEditorContainer');
+        const previewContainer = document.getElementById('notePreviewContainer');
+        const noteTextarea = document.getElementById('noteTextarea');
+        const markdownContent = document.getElementById('markdownContent');
+        const saveStatus = document.getElementById('saveStatus');
+
+        function updatePreview() {
+            const content = noteTextarea.value;
+            markdownContent.innerHTML = marked.parse(content || '*No notes provided.*');
+        }
+
+        previewBtn.addEventListener('click', () => {
+            previewBtn.classList.add('active');
+            previewBtn.style.background = 'var(--accent)';
+            previewBtn.style.color = '#fff';
+            editBtn.classList.remove('active');
+            editBtn.style.background = 'transparent';
+            editBtn.style.color = 'var(--text-dim)';
+
+            editorContainer.style.display = 'none';
+            previewContainer.style.display = 'block';
+            updatePreview();
+        });
+
+        editBtn.addEventListener('click', () => {
+            editBtn.classList.add('active');
+            editBtn.style.background = 'var(--accent)';
+            editBtn.style.color = '#fff';
+            previewBtn.classList.remove('active');
+            previewBtn.style.background = 'transparent';
+            previewBtn.style.color = 'var(--text-dim)';
+
+            previewContainer.style.display = 'none';
+            editorContainer.style.display = 'block';
+            noteTextarea.focus();
+        });
+
+        // Initialize preview
+        previewBtn.style.background = 'var(--accent)';
+        previewBtn.style.color = '#fff';
+        updatePreview();
+
+        // Render AI Summary
+        const aiRawMarkdown = `<%- ai.replace(/` / g, '\\`').replace(/\$/g, '\\$') %> `;
+        const aiSummaryContent = document.getElementById('aiSummaryContent');
+        if (aiSummaryContent && aiRawMarkdown) {
+            aiSummaryContent.innerHTML = marked.parse(aiRawMarkdown);
+        }
+
+        // Auto-save logic
+        let saveTimeout;
+        noteTextarea.addEventListener('input', () => {
+            saveStatus.innerText = 'Saving...';
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveNote, 1000);
+        });
+
+        async function saveNote() {
+            try {
+                const res = await fetch('/api/update-trade-note', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: '<%= trade._id %>',
+                        content: noteTextarea.value
+                    })
+                });
+                if (await res.text() === '1') {
+                    saveStatus.innerText = 'All changes saved';
+                } else {
+                    saveStatus.innerText = 'Error saving changes';
+                }
+            } catch (err) {
+                console.error(err);
+                saveStatus.innerText = 'Connection error';
+            }
+        }
+
+        // Screenshot management
+        const uploadInput = document.getElementById('uploadScreenshot');
+        const screenshotsGrid = document.getElementById('screenshotsGrid');
+        const placeholder = document.getElementById('noScreenshotsPlaceholder');
+
+        uploadInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const base64Content = event.target.result;
+                
+                try {
+                    const res = await fetch('/api/add-screenshot', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: '<%= trade._id %>',
+                            img: base64Content
+                        })
+                    });
+                    
+                    if (await res.text() === '1') {
+                        window.location.reload(); // Simple reload to refresh the grid
+                    } else {
+                        alert('Error uploading screenshot.');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Upload failed.');
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Delete screenshot
+        document.querySelectorAll('.delete-screenshot-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const index = btn.getAttribute('data-index');
+                if (!confirm('Are you sure you want to delete this screenshot?')) return;
+
+                try {
+                    const res = await fetch('/api/delete-screenshot', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: '<%= trade._id %>',
+                            index: parseInt(index)
+                        })
+                    });
+                    
+                    if (await res.text() === '1') {
+                        window.location.reload();
+                    } else {
+                        alert('Error deleting screenshot.');
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+        });
+
+        // Image Zoom
+        const imageModal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        const closeImageModal = document.getElementById('closeImageModal');
+        const zoomIn = document.getElementById('zoomIn');
+        const zoomOut = document.getElementById('zoomOut');
+        let currentScale = 1;
+
+        document.querySelectorAll('.zoomable-img').forEach(img => {
+            img.addEventListener('click', () => {
+                modalImg.src = img.src;
+                imageModal.style.display = 'flex';
+                currentScale = 1;
+                modalImg.style.transform = `scale(${ currentScale })`;
+            });
+        });
+
+        closeImageModal.addEventListener('click', () => {
+            imageModal.style.display = 'none';
+        });
+
+        zoomIn.addEventListener('click', () => {
+            currentScale += 0.2;
+            modalImg.style.transform = `scale(${ currentScale })`;
+            modalImg.style.cursor = 'zoom-out';
+        });
+
+        zoomOut.addEventListener('click', () => {
+            if (currentScale > 0.5) {
+                currentScale -= 0.2;
+                modalImg.style.transform = `scale(${ currentScale })`;
+                modalImg.style.cursor = 'zoom-in';
+            }
+        });
+
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                imageModal.style.display = 'none';
+            }
+        });
+
+        // User Dropdown toggle
+        const userBtn = document.getElementById('user-menu-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+        
+        userBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+            userBtn.setAttribute('aria-expanded', userDropdown.classList.contains('show'));
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.remove('show');
+                userBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Execution Edit Logic
+        const editExecutionBtn = document.getElementById('editExecutionBtn');
+        const executionView = document.getElementById('executionView');
+        const executionEdit = document.getElementById('executionEdit');
+        let isEditing = false;
+
+        editExecutionBtn.addEventListener('click', async () => {
+            if (!isEditing) {
+                // Switch to edit mode
+                executionView.style.display = 'none';
+                executionEdit.style.display = 'grid';
+                editExecutionBtn.innerText = 'Save';
+                editExecutionBtn.classList.add('save');
+                isEditing = true;
+            } else {
+                // Save and switch to view mode
+                editExecutionBtn.innerText = 'Saving...';
+                editExecutionBtn.disabled = true;
+
+                const data = {
+                    id: document.getElementById('tradeId').value,
+                    date: document.getElementById('editDate').value,
+                    entryTime: document.getElementById('editEntryTime').value,
+                    exitTime: document.getElementById('editExitTime').value,
+                    timeframe: document.getElementById('editTimeframe').value,
+                    timezone: document.getElementById('editTimezone').value,
+                    qty: document.getElementById('editQty').value,
+                    hold: document.getElementById('editHold').value,
+                    session: document.getElementById('editSession').value,
+                    // Preserve other fields
+                    type: '<%= trade.type %>',
+                    asset: '<%= trade.asset %>',
+                    status: '<%= trade.status %>',
+                    entry: '<%= trade.entry %>',
+                    exit: '<%= trade.exit %>',
+                    tp: '<%= trade.tp %>',
+                    sl: '<%= trade.sl %>',
+                    ret: '<%= trade.ret %>'
+                };
+
+                try {
+                    const res = await fetch('/api/update-trade', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (await res.text() === '1') {
+                        window.location.reload();
+                    } else {
+                        alert('Error saving trade details.');
+                        editExecutionBtn.innerText = 'Save';
+                        editExecutionBtn.disabled = false;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Connection error.');
+                    editExecutionBtn.innerText = 'Save';
+                    editExecutionBtn.disabled = false;
+                }
+            }
+        });
+
+        tradesDropdownBtn.addEventListener('click', () => {
+            tradesDropdownBtn.classList.toggle('open');
+            tradesMenu.classList.toggle('show');
+        });
+    </script>
+</body>
+
+</html>

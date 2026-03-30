@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - TradeGodly</title>
+         <meta property="og:url" content="https://tradegodly.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <meta property="og:title" content="Settings - TradeGodly">
+    <meta property="og:image" content="assets/img/logo.png">
+    <meta name="theme-color" content="#00008B">
+    <meta name="description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        /* ── Tokens ── */
+        :root {
+            --bg: #0e1117;
+            --surface: #161b27;
+            --surface-2: #1c2333;
+            --border: #1e2a3a;
+            --text: #e2e8f0;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
+            --accent: #3b82f6;
+            --accent-dim: rgba(59, 130, 246, 0.12);
+            --green: #22c55e;
+            --radius: 8px;
+            --transition: 0.18s ease;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            height: 58px;
+            background: rgba(14, 17, 23, 0.92);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 24px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-brand {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .user-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .user-dropdown-btn:hover .username {
+            color: var(--accent);
+        }
+
+        .username {
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color var(--transition);
+        }
+
+        .profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            min-width: 150px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 200;
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: block;
+            text-align: left;
+            border: none;
+            background: transparent;
+            width: 100%;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: var(--border);
+        }
+
+        /* ── LAYOUT ── */
+        .layout-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .layout-body {
+                display: block;
+                overflow: visible;
+            }
+            body {
+                overflow-y: auto;
+                height: auto;
+            }
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 240px;
+            background: var(--bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0.75rem;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .account-select-wrapper {
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+        }
+
+        .account-select {
+            width: 100%;
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+            font-family: inherit;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .account-select:focus {
+            border-color: var(--accent);
+        }
+
+        .account-select:invalid {
+            color: var(--text-dim);
+        }
+
+        .sidebar-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            color: var(--text);
+            background: var(--surface-2);
+        }
+
+        .sidebar-link.active {
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .sidebar-link svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        .hr {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0.5rem;
+        }
+
+        /* SIDEBAR DROPDOWN */
+        .sidebar-dropdown-btn {
+            justify-content: space-between;
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+        }
+
+        .sidebar-dropdown-btn .left-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chevron {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s;
+        }
+
+        .sidebar-dropdown-menu {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            padding-left: 26px;
+            margin-top: 4px;
+        }
+
+        .sidebar-dropdown-menu.show {
+            display: flex;
+        }
+
+        .sidebar-dropdown-btn.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+        }
+
+        /* Utility Responsive Classes */
+        @media (max-width: 480px) {
+            .info-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            .header-flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 1rem;
+            }
+            .modal {
+                width: 95% !important;
+                padding: 1rem !important;
+            }
+        }
+    </style>
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="/" class="nav-left">
+            <div class="nav-logo">
+                <img src="/assets/img/logo.png" alt="TradeGodly"
+                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='" />
+            </div>
+            <span class="nav-brand">TradeGodly</span>
+        </a>
+
+        <div class="nav-right">
+            <button class="user-dropdown-btn" id="user-menu-btn" aria-haspopup="true" aria-expanded="false">
+                <span class="username" style="font-weight: bold;">
+                    <%= username.charAt(0).toUpperCase() + username.slice(1) %>
+                </span>
+                <img src="<%= typeof user !== 'undefined' && user.avatar ? user.avatar : '/assets/img/logo.png' %>"
+                    alt="Profile" class="profile-pic"
+                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='" />
+            </button>
+            <div class="dropdown-menu" id="user-dropdown">
+                <a href="#" class="dropdown-item" onclick="if(confirm('Are you sure you want to delete your account? This action is IRREVERSIBLE and will delete all your data.')) window.location.href='/delete-account'; return false;" style="color: #f87171;">Delete Account</a>
+                <a href="/logout" class="dropdown-item">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout-body">
+        <%- include('partials/sidebar') %>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <h1 style="margin-bottom: 2rem; font-size: 1.4rem;">Settings</h1>
+
+            <div class="info-card"
+                style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem;">
+                <h2 style="font-size: 1.1rem; margin-bottom: 1.25rem; color: var(--text);">Account Information</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <span
+                            style="display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem;">Username</span>
+                        <span style="font-size: 1.15rem; font-weight: 500; color: var(--text);">
+                            <%= username.charAt(0).toUpperCase() + username.slice(1) %>
+                        </span>
+                    </div>
+                    <div>
+                        <span
+                            style="display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem;">Plan</span>
+                        <span style="font-size: 1.15rem; font-weight: 600; color: var(--accent);">
+                            <%= plan.toUpperCase() %>
+                        </span>
+                    </div>
+                    <div>
+                        <span
+                            style="display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem;">Plan
+                            Expiration</span>
+                        <span style="font-size: 1.15rem; font-weight: 500; color: var(--text);">
+                            <%= planExpiration==="n/a" ? "Never" : planExpiration %>
+                        </span>
+                    </div>
+                    <div>
+                        <span
+                            style="display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 0.4rem;">Accounts</span>
+                        <span style="font-size: 1.15rem; font-weight: 500; color: var(--text);">
+                            <%= typeof accountsList !=='undefined' ? accountsList.length : 0 %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rules-card"
+                style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="font-size: 1.1rem; color: var(--text);">Manage Rules</h2>
+                    <button id="addRuleBtn"
+                        style="background: var(--accent); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: var(--radius); cursor: pointer; font-weight: 600; transition: filter 0.2s; box-shadow: 0 4px 12px var(--accent-dim);">+
+                        Add Rule</button>
+                </div>
+
+                <div id="rulesList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <% if (typeof rules !=='undefined' && rules.length> 0) { %>
+                        <% rules.forEach(function(rule) { %>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; background: var(--surface-2); padding: 0.75rem 1rem; border-radius: var(--radius); border: 1px solid var(--border);">
+                                <span style="color: var(--text); font-size: 0.85rem;">
+                                    <%= rule %>
+                                </span>
+                                <button class="remove-rule-btn" data-rule="<%= rule %>"
+                                    style="background: transparent; border: none; color: #ef4444; cursor: pointer; padding: 0.2rem; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s;"
+                                    onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path
+                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                        </path>
+                                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div
+                                        style="text-align: center; padding: 1.5rem; color: var(--text-muted); background: var(--surface-2); border-radius: var(--radius);">
+                                        No rules found. Add one to stay disciplined.
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+
+            <div class="accounts-card"
+                style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; overflow-x: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="font-size: 1.1rem; color: var(--text);">Manage Accounts</h2>
+                    <button id="addAccountBtn"
+                        style="background: var(--accent); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: var(--radius); cursor: pointer; font-weight: 600; transition: filter 0.2s; box-shadow: 0 4px 12px var(--accent-dim);">+
+                        Add Account</button>
+                </div>
+
+                <table class="accounts-table"
+                    style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                    <thead>
+                        <tr>
+                            <th
+                                style="padding: 0.8rem 0.5rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap;">
+                                Created Date</th>
+                            <th
+                                style="padding: 0.8rem 0.5rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap;">
+                                Name</th>
+                            <th
+                                style="padding: 0.8rem 0.5rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap;">
+                                Initial Deposit</th>
+                            <th
+                                style="padding: 0.8rem 0.5rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap;">
+                                Winrate</th>
+                            <th
+                                style="padding: 0.8rem 0.5rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap;">
+                                Average Win</th>
+                            <th
+                                style="padding: 0.8rem 0.5rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap;">
+                                Average Loss</th>
+                            <th
+                                style="padding: 0.8rem 0.5rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap;">
+                                PnL</th>
+                            <th
+                                style="padding: 0.8rem 0.5rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); text-align: center; white-space: nowrap;">
+                                Blown</th>
+                            <th
+                                style="padding: 0.8rem 0.5rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap;">
+                                Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (typeof accountsData !=='undefined' && accountsData.length> 0) { %>
+                            <% accountsData.forEach(function(acc) { %>
+                                <tr style="transition: background 0.15s;"
+                                    onmouseover="this.style.background='rgba(255,255,255,0.02)'"
+                                    onmouseout="this.style.background='transparent'">
+                                    <td
+                                        style="padding: 0.8rem 0.5rem; color: var(--text-dim); border-bottom: 1px solid rgba(30, 42, 58, 0.4);">
+                                        <%= acc.createdAt %>
+                                    </td>
+                                    <td
+                                        style="padding: 0.8rem 0.5rem; font-weight: 600; color: var(--text); border-bottom: 1px solid rgba(30, 42, 58, 0.4);">
+                                        <%= acc.name.charAt(0).toUpperCase() + acc.name.slice(1) %>
+                                    </td>
+                                    <td
+                                        style="padding: 0.8rem 0.5rem; font-weight: 600; color: var(--text); border-bottom: 1px solid rgba(30, 42, 58, 0.4);">
+                                        $<%= (acc.deposit || 0).toFixed(2) %>
+                                    </td>
+                                    <td style="padding: 0.8rem 0.5rem; border-bottom: 1px solid rgba(30, 42, 58, 0.4);">
+                                        <%= acc.winrate %>%
+                                    </td>
+                                    <td
+                                        style="padding: 0.8rem 0.5rem; color: #4ade80; border-bottom: 1px solid rgba(30, 42, 58, 0.4);">
+                                        +$<%= acc.avgWin %>
+                                    </td>
+                                    <td
+                                        style="padding: 0.8rem 0.5rem; color: #f87171; border-bottom: 1px solid rgba(30, 42, 58, 0.4);">
+                                        -$<%= acc.avgLoss %>
+                                    </td>
+                                    <% let pnlSign=acc.pnl>= 0 ? "+" : "-";
+                                        %>
+                                        <td
+                                            style="padding: 0.8rem 0.5rem; font-weight: 600; color: <%= acc.pnl >= 0 ? '#4ade80' : '#f87171' %>; border-bottom: 1px solid rgba(30, 42, 58, 0.4);">
+                                            <%= pnlSign %>$<%= Math.abs(acc.pnl).toFixed(2) %>
+                                        </td>
+                                        <td
+                                            style="padding: 0.8rem 0.5rem; text-align: center; border-bottom: 1px solid rgba(30, 42, 58, 0.4); font-size: 1rem;">
+                                            <%= acc.blown ? "✔️" : "❌" %>
+                                        </td>
+                                        <td
+                                            style="padding: 0.8rem 0.5rem; text-align: right; border-bottom: 1px solid rgba(30, 42, 58, 0.4);">
+                                            <button class="remove-account-btn" data-name="<%= acc.name %>"
+                                                style="background: transparent; border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; padding: 0.35rem 0.7rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: background 0.2s, border-color 0.2s;"
+                                                onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.borderColor='#ef4444';"
+                                                onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(239, 68, 68, 0.4)';">Delete</button>
+                                        </td>
+                                </tr>
+                                <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="9"
+                                                style="text-align: center; padding: 3rem 1rem; color: var(--text-muted); background: var(--surface-2); border-bottom: none;">
+                                                No accounts found. Add one to start tracking trades.
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Rule Modal -->
+    <div class="modal-overlay" id="addRuleModal"
+        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.2s ease;">
+        <div class="modal"
+            style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 400px; padding: 1.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.2s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+                <h2 style="font-size: 1.15rem; font-weight: 600;">Add Strategy Rule</h2>
+                <button id="closeAddRuleModal"
+                    style="background: none; border: none; color: var(--text-dim); cursor: pointer;"><svg width="20"
+                        height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></button>
+            </div>
+            <form id="addRuleForm">
+                <div style="margin-bottom: 1rem;">
+                    <label
+                        style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 500;">Rule
+                        Sentence (max 125 chars)</label>
+                    <textarea id="newRuleText" required maxlength="125"
+                        placeholder="e.g. Always wait for a retest before entry."
+                        style="width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.6rem 0.8rem; border-radius: var(--radius); font-family: inherit; font-size: 0.9rem; resize: none; height: 80px;"></textarea>
+                    <div id="ruleCharCount"
+                        style="text-align: right; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">0
+                        / 125</div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" id="cancelAddRuleModal"
+                        style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 0.5rem 1rem; border-radius: var(--radius); cursor: pointer; font-size: 0.9rem;">Cancel</button>
+                    <button type="submit"
+                        style="background: var(--accent); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: var(--radius); cursor: pointer; font-size: 0.9rem; font-weight: 600;">Add
+                        Rule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Account Modal -->
+    <div class="modal-overlay" id="addAccountModal"
+        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.2s ease;">
+        <div class="modal"
+            style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 400px; padding: 1.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.2s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+                <h2 style="font-size: 1.15rem; font-weight: 600;">Add Account</h2>
+                <button id="closeAddAccountModal"
+                    style="background: none; border: none; color: var(--text-dim); cursor: pointer;"><svg width="20"
+                        height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></button>
+            </div>
+            <form id="addAccountForm">
+                <div style="margin-bottom: 1rem;">
+                    <label
+                        style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 500;">Account
+                        Name</label>
+                    <input type="text" id="newAccountName" required placeholder="e.g. My Prop Firm"
+                        style="width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.6rem 0.8rem; border-radius: var(--radius); font-family: inherit; font-size: 0.9rem;" />
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label
+                        style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 500;">Initial
+                        Deposit ($)</label>
+                    <input type="number" id="newAccountDeposit" required step="0.01" placeholder="e.g. 10000"
+                        style="width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.6rem 0.8rem; border-radius: var(--radius); font-family: inherit; font-size: 0.9rem;" />
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" id="cancelAddAccountModal"
+                        style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 0.5rem 1rem; border-radius: var(--radius); cursor: pointer; font-size: 0.9rem;">Cancel</button>
+                    <button type="submit"
+                        style="background: var(--accent); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: var(--radius); cursor: pointer; font-size: 0.9rem; font-weight: 600;">Confirm
+                        Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // User Dropdown toggle
+        const userBtn = document.getElementById('user-menu-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        userBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+            userBtn.setAttribute('aria-expanded', userDropdown.classList.contains('show'));
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.remove('show');
+                userBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+
+        // Account Management Logic
+        const modalOverlay = document.getElementById('addAccountModal');
+        const modalContent = modalOverlay.querySelector('.modal');
+        const addBtn = document.getElementById('addAccountBtn');
+        const closeBtn = document.getElementById('closeAddAccountModal');
+        const cancelBtn = document.getElementById('cancelAddAccountModal');
+        const form = document.getElementById('addAccountForm');
+
+        const openModal = () => {
+            modalOverlay.style.display = 'flex';
+            setTimeout(() => {
+                modalOverlay.style.opacity = '1';
+                modalContent.style.transform = 'scale(1)';
+            }, 10);
+        };
+
+        const closeModal = () => {
+            modalOverlay.style.opacity = '0';
+            modalContent.style.transform = 'scale(0.95)';
+            setTimeout(() => { modalOverlay.style.display = 'none'; }, 200);
+        };
+
+        addBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('newAccountName').value;
+            const deposit = document.getElementById('newAccountDeposit').value;
+
+            if (!name || name.trim() === '') return;
+
+            try {
+                const res = await fetch('/api/new-account', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name.trim(), deposit: parseFloat(deposit) })
+                });
+                const text = await res.text();
+                if (text === '1') {
+                    window.location.reload();
+                } else {
+                    alert('Error adding account.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error connecting to server.');
+            }
+        });
+
+        document.querySelectorAll('.remove-account-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const name = e.target.getAttribute('data-name');
+                if (!confirm(`Are you sure you want to remove account "${name}"? This will permanently delete all its associated trades.`)) return;
+
+                const originalText = e.target.innerText;
+                e.target.innerText = "Removing...";
+                e.target.disabled = true;
+
+                try {
+                    const res = await fetch('/api/remove-account', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name })
+                    });
+                    const text = await res.text();
+                    if (text === '1') {
+                        window.location.reload();
+                    } else {
+                        alert('Error removing account.');
+                        e.target.innerText = originalText;
+                        e.target.disabled = false;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Error connecting to server.');
+                    e.target.innerText = originalText;
+                    e.target.disabled = false;
+                }
+            });
+        });
+
+        // Rule Management Logic
+        const ruleModalOverlay = document.getElementById('addRuleModal');
+        const ruleModalContent = ruleModalOverlay.querySelector('.modal');
+        const addRuleBtn = document.getElementById('addRuleBtn');
+        const closeRuleBtn = document.getElementById('closeAddRuleModal');
+        const cancelRuleBtn = document.getElementById('cancelAddRuleModal');
+        const ruleForm = document.getElementById('addRuleForm');
+        const ruleTextArea = document.getElementById('newRuleText');
+        const ruleCharCount = document.getElementById('ruleCharCount');
+
+        ruleTextArea.addEventListener('input', () => {
+            ruleCharCount.innerText = `${ruleTextArea.value.length} / 125`;
+        });
+
+        const openRuleModal = () => {
+            ruleModalOverlay.style.display = 'flex';
+            setTimeout(() => {
+                ruleModalOverlay.style.opacity = '1';
+                ruleModalContent.style.transform = 'scale(1)';
+            }, 10);
+        };
+
+        const closeRuleModal = () => {
+            ruleModalOverlay.style.opacity = '0';
+            ruleModalContent.style.transform = 'scale(0.95)';
+            setTimeout(() => { ruleModalOverlay.style.display = 'none'; }, 200);
+        };
+
+        addRuleBtn.addEventListener('click', openRuleModal);
+        closeRuleBtn.addEventListener('click', closeRuleModal);
+        cancelRuleBtn.addEventListener('click', closeRuleModal);
+
+        ruleForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const rule = ruleTextArea.value.trim();
+            if (!rule) return;
+
+            try {
+                const res = await fetch('/api/new-rule', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rule })
+                });
+                const text = await res.text();
+                if (text === '1') {
+                    window.location.reload();
+                } else if (text === 'max') {
+                    alert('Maximum of 40 rules allowed.');
+                } else {
+                    alert('Error adding rule.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error connecting to server.');
+            }
+        });
+
+        document.querySelectorAll('.remove-rule-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const btnEl = e.currentTarget;
+                const rule = btnEl.getAttribute('data-rule');
+                if (!confirm(`Are you sure you want to remove this rule?`)) return;
+
+                try {
+                    const res = await fetch('/api/remove-rule', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ rule })
+                    });
+                    const text = await res.text();
+                    if (text === '1') {
+                        window.location.reload();
+                    } else {
+                        alert('Error removing rule.');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Error connecting to server.');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

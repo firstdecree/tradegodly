@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trades - TradeGodly</title>
+         <meta property="og:url" content="https://tradegodly.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <meta property="og:title" content="Trades - TradeGodly">
+    <meta property="og:image" content="assets/img/logo.png">
+    <meta name="theme-color" content="#00008B">
+    <meta name="description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        /* ── Tokens ── */
+        :root {
+            --bg: #0e1117;
+            --surface: #161b27;
+            --surface-2: #1c2333;
+            --border: #1e2a3a;
+            --text: #e2e8f0;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
+            --accent: #3b82f6;
+            --accent-dim: rgba(59, 130, 246, 0.12);
+            --green: #22c55e;
+            --radius: 8px;
+            --transition: 0.18s ease;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            height: 58px;
+            background: rgba(14, 17, 23, 0.92);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 24px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-brand {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .user-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .user-dropdown-btn:hover .username {
+            color: var(--accent);
+        }
+
+        .username {
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color var(--transition);
+        }
+
+        .profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            min-width: 150px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 200;
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: block;
+            text-align: left;
+            border: none;
+            background: transparent;
+            width: 100%;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: var(--border);
+        }
+
+        /* ── LAYOUT ── */
+        .layout-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .layout-body {
+                overflow: visible;
+                display: block;
+            }
+            body {
+                overflow-y: auto;
+                height: auto;
+            }
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 240px;
+            background: var(--bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0.75rem;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .account-select-wrapper {
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+        }
+
+        .account-select {
+            width: 100%;
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+            font-family: inherit;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .account-select:focus {
+            border-color: var(--accent);
+        }
+
+        .account-select:invalid {
+            color: var(--text-dim);
+        }
+
+        .sidebar-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            color: var(--text);
+            background: var(--surface-2);
+        }
+
+        .sidebar-link.active {
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .sidebar-link svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        .hr {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0.5rem;
+        }
+
+        /* SIDEBAR DROPDOWN */
+        .sidebar-dropdown-btn {
+            justify-content: space-between;
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+        }
+
+        .sidebar-dropdown-btn .left-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chevron {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s;
+        }
+
+        .sidebar-dropdown-menu {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            padding-left: 26px;
+            margin-top: 4px;
+        }
+
+        .sidebar-dropdown-menu.show {
+            display: flex;
+        }
+
+        .sidebar-dropdown-btn.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+        }
+
+        .recent-trades {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            .recent-trades {
+                padding: 1rem;
+                margin: 0 -0.5rem;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+        }
+
+        .trades-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.78rem;
+        }
+
+        .trades-table th {
+            padding: 0.6rem 0.4rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .trades-table td {
+            padding: 0.6rem 0.4rem;
+            color: var(--text);
+            border-bottom: 1px solid rgba(30, 42, 58, 0.4);
+            white-space: nowrap;
+        }
+
+        .trades-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .trades-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.3rem;
+            border-radius: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .badge.long {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .badge.short {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+        }
+
+        .badge.win {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+        }
+
+        .badge.lose {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        .text-green {
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .text-red {
+            color: #f87171;
+            font-weight: 600;
+        }
+
+        /* MODAL STYLES */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 95%;
+            max-width: 480px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+
+        @media (max-width: 480px) {
+            .modal {
+                padding: 1rem;
+                border-radius: 8px;
+            }
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: color 0.15s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.6rem 0.8rem;
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.15s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+
+        .modal-footer {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-submit {
+            background: var(--accent);
+            border: none;
+            color: #fff;
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.15s ease;
+            box-shadow: 0 4px 12px var(--accent-dim);
+        }
+
+        .btn-submit:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-submit:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="/" class="nav-left">
+            <div class="nav-logo">
+                <img src="/assets/img/logo.png" alt="TradeGodly"
+                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='" />
+            </div>
+            <span class="nav-brand">TradeGodly</span>
+        </a>
+
+        <div class="nav-right">
+            <button class="user-dropdown-btn" id="user-menu-btn" aria-haspopup="true" aria-expanded="false">
+                <span class="username" style="font-weight: bold;">
+                    <%= username.charAt(0).toUpperCase() + username.slice(1) %>
+                </span>
+                <img src="<%= typeof user !== 'undefined' && user.avatar ? user.avatar : '/assets/img/logo.png' %>"
+                    alt="Profile" class="profile-pic"
+                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='" />
+            </button>
+            <div class="dropdown-menu" id="user-dropdown">
+                <a href="#" class="dropdown-item" onclick="if(confirm('Are you sure you want to delete your account? This action is IRREVERSIBLE and will delete all your data.')) window.location.href='/delete-account'; return false;" style="color: #f87171;">Delete Account</a>
+                <a href="/logout" class="dropdown-item">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout-body">
+        <%- include('partials/sidebar') %>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.4rem;">Trades</h1>
+                <button class="add-trade-btn"
+                    style="background: var(--accent); color: #fff; border: none; border-radius: var(--radius); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: opacity var(--transition); box-shadow: 0 4px 12px var(--accent-dim);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="recent-trades" style="margin-top: 0;">
+                <table class="trades-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Asset</th>
+                            <th>Status</th>
+                            <th>Qty</th>
+                            <th>Entry</th>
+                            <th>Exit</th>
+                            <th>TP</th>
+                            <th>SL</th>
+                            <th>Hold</th>
+                            <th>Ret</th>
+                            <th>%</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (typeof tradesList !=='undefined' && tradesList.length> 0) { %>
+                            <% tradesList.forEach(function(trade) { %>
+                                <tr onclick="window.location.href='/trade/<%= trade._id %>'">
+                                    <td>
+                                        <%= new Date(trade.date).toLocaleDateString('en-US', { month: 'short' ,
+                                            day: 'numeric' , timeZone: 'UTC' }) %>
+                                    </td>
+                                    <td><span class="badge <%= trade.type.toLowerCase() %>">
+                                            <%= trade.type %>
+                                        </span></td>
+                                    <td>
+                                        <%= trade.asset.toUpperCase() %>
+                                    </td>
+                                    <td><span class="badge <%= trade.status.toLowerCase() %>">
+                                            <%= trade.status %>
+                                        </span></td>
+                                    <td>
+                                        <%= trade.qty %>
+                                    </td>
+                                    <td>$<%= parseFloat(trade.entry).toFixed(2) %>
+                                    </td>
+                                    <td>$<%= parseFloat(trade.exit).toFixed(2) %>
+                                    </td>
+                                    <td>$<%= parseFloat(trade.tp).toFixed(2) %>
+                                    </td>
+                                    <td>$<%= parseFloat(trade.sl).toFixed(2) %>
+                                    </td>
+                                    <td>
+                                        <%= trade.hold %>
+                                    </td>
+                                    <% let retVal=parseFloat(trade.ret) || 0; let isPositive=retVal>= 0;
+                                        let colorClass = trade.status === "WIN" ? 'text-green' : 'text-red';
+                                        let sign = trade.status === "WIN" ? '+' : '-';
+
+                                        let entryPrice = parseFloat(trade.entry) || 1;
+                                        let qty = parseFloat(trade.qty) || 1;
+                                        let pct = ((retVal / (entryPrice * qty)) * 100).toFixed(2);
+                                        let pctSign = trade.status === "WIN" ? '+' : '-';
+                                        %>
+                                        <td class="<%= colorClass %>">
+                                            <%= sign %>$<%= Math.abs(retVal).toFixed(2) %>
+                                        </td>
+                                        <td class="<%= colorClass %>">
+                                            <%= pctSign %>
+                                                <%= pct %>%
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <button class="delete-trade-btn" data-id="<%= trade._id %>"
+                                                onclick="event.stopPropagation();"
+                                                style="background: transparent; border: none; color: #ef4444; cursor: pointer; padding: 4px; display: inline-flex; align-items: center; justify-content: center; transition: color 0.15s ease;"
+                                                onmouseover="this.style.color='#f87171'"
+                                                onmouseout="this.style.color='#ef4444'">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                                    <path
+                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                    </path>
+                                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                                </svg>
+                                            </button>
+                                        </td>
+                                </tr>
+                                <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="13"
+                                                style="text-align: center; padding: 2rem; color: var(--text-muted);">No
+                                                trades found.</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="pagination"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(30, 42, 58, 0.5);">
+                    <span style="color: var(--text-muted); font-size: 0.85rem;">Showing <%= totalTrades> 0 ?
+                            ((currentPage - 1) * 10) + 1 : 0 %> - <%= Math.min(currentPage * 10, totalTrades) %> of <%=
+                                    totalTrades %> trades</span>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="window.location.href='?page=<%= currentPage - 1 %>'"
+                            style="background: var(--surface-2); border: 1px solid var(--border); color: var(--text<%= currentPage > 1 ? '' : '-muted' %>); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; <%= currentPage > 1 ? 'cursor: pointer; transition: background var(--transition);' : 'opacity: 0.5; cursor: not-allowed;' %>"
+                            <%= currentPage > 1 ? 'onmouseover="this.style.background=\'var(--border)\'" onmouseout="this.style.background=\'var(--surface-2)\'"' : 'disabled' %>>&lt; Prev</button>
+                        <button onclick="window.location.href='?page=<%= currentPage + 1 %>'"
+                            style="background: var(--surface-2); border: 1px solid var(--border); color: var(--text<%= currentPage < totalPages ? '' : '-muted' %>); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; <%= currentPage < totalPages ? 'cursor: pointer; transition: background var(--transition);' : 'opacity: 0.5; cursor: not-allowed;' %>"
+                            <%= currentPage < totalPages ? 'onmouseover="this.style.background=\'var(--border)\'" onmouseout="this.style.background=\'var(--surface-2)\'"' : 'disabled' %>>Next &gt;</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="addTradeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Add Trade</h2>
+                <button class="modal-close" id="closeModalBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="addTradeForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Entry Time</label>
+                        <input type="text" placeholder="00:00:00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Exit Time</label>
+                        <input type="text" placeholder="00:00:00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Timeframe</label>
+                        <select required>
+                            <option value="1m">1m</option>
+                            <option value="3m">3m</option>
+                            <option value="5m">5m</option>
+                            <option value="15m">15m</option>
+                            <option value="30m">30m</option>
+                            <option value="1h" selected>1h</option>
+                            <option value="4h">4h</option>
+                            <option value="1d">1d</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Asset</label>
+                        <input type="text" placeholder="e.g. XAUUSD" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Session</label>
+                        <select required>
+                            <option value="Sydney">Sydney</option>
+                            <option value="Tokyo">Tokyo</option>
+                            <option value="London">London</option>
+                            <option value="New York">New York</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Timezone (e.g. UTC-8, UTC+0)</label>
+                    <input type="text" id="timezoneInput" placeholder="UTC-8" value="UTC+0" list="timezoneList"
+                        required>
+                    <datalist id="timezoneList">
+                        <option value="UTC+0">UTC+0</option>
+                        <option value="UTC+1">UTC+1</option>
+                        <option value="UTC+2">UTC+2</option>
+                        <option value="UTC+3">UTC+3</option>
+                        <option value="UTC+5:30">UTC+5:30</option>
+                        <option value="UTC+7">UTC+7</option>
+                        <option value="UTC+8">UTC+8</option>
+                        <option value="UTC+9">UTC+9</option>
+                        <option value="UTC+10">UTC+10</option>
+                        <option value="UTC-4">UTC-4</option>
+                        <option value="UTC-5">UTC-5</option>
+                        <option value="UTC-6">UTC-6</option>
+                        <option value="UTC-7">UTC-7</option>
+                        <option value="UTC-8">UTC-8</option>
+                    </datalist>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select required>
+                            <option value="LONG">LONG</option>
+                            <option value="SHORT">SHORT</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select required>
+                            <option value="WIN">WIN</option>
+                            <option value="LOSE">LOSE</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" step="0.01" placeholder="e.g. 1.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hold Duration (Date/Text)</label>
+                        <input type="text" placeholder="e.g. 2d, 4h, or date" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Entry ($)</label>
+                        <input type="number" step="0.00001" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Exit ($)</label>
+                        <input type="number" step="0.00001" placeholder="0.00" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Take Profit ($)</label>
+                        <input type="number" step="0.00001" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Stop Loss ($)</label>
+                        <input type="number" step="0.00001" placeholder="0.00" required>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Return ($, W or L)</label>
+                    <input type="number" step="0.01" placeholder="e.g. 500.00" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelModalBtn">Cancel</button>
+                    <button type="submit" class="btn-submit">Add Trade</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // User Dropdown toggle
+        const userBtn = document.getElementById('user-menu-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        userBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+            userBtn.setAttribute('aria-expanded', userDropdown.classList.contains('show'));
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.remove('show');
+                userBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+
+        // Modal Logic
+        const modal = document.getElementById('addTradeModal');
+        const openBtn = document.querySelector('.add-trade-btn');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const cancelBtn = document.getElementById('cancelModalBtn');
+        const form = document.getElementById('addTradeForm');
+
+        openBtn.addEventListener('click', () => {
+            modal.classList.add('show');
+        });
+
+        const closeModal = () => {
+            modal.classList.remove('show');
+            form.reset();
+        };
+
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.querySelector('.btn-submit');
+            const ogText = btn.innerText;
+            btn.innerText = "Adding...";
+            btn.disabled = true;
+            const inputs = form.querySelectorAll('input, select');
+            const formData = {
+                date: inputs[0].value,
+                entryTime: inputs[1].value,
+                exitTime: inputs[2].value,
+                timeframe: inputs[3].value,
+                asset: inputs[4].value,
+                session: inputs[5].value,
+                timezone: inputs[6].value,
+                type: inputs[7].value,
+                status: inputs[8].value,
+                qty: inputs[9].value,
+                hold: inputs[10].value,
+                entry: inputs[11].value,
+                exit: inputs[12].value,
+                tp: inputs[13].value,
+                sl: inputs[14].value,
+                ret: inputs[15].value
+            };
+
+            try {
+                const res = await fetch('/api/new-trade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const text = await res.text();
+                if (text === '1') {
+                    window.location.reload();
+                } else {
+                    alert('Error adding trade. Ensure an account is selected and form is filled.');
+                    btn.innerText = ogText;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error connecting to server.');
+                btn.innerText = ogText;
+                btn.disabled = false;
+            }
+        });
+
+        // Delete Trade Logic
+        document.querySelectorAll('.delete-trade-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = btn.getAttribute('data-id');
+                if (!confirm('Are you sure you want to delete this trade?')) return;
+
+                const originalColor = btn.style.color;
+                btn.disabled = true;
+                btn.style.color = 'var(--text-muted)';
+
+                try {
+                    const res = await fetch('/api/remove-trade', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id })
+                    });
+                    const text = await res.text();
+                    if (text === '1') {
+                        btn.closest('tr').remove();
+                    } else {
+                        alert('Error deleting trade.');
+                        btn.disabled = false;
+                        btn.style.color = originalColor;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Error connecting to server.');
+                    btn.disabled = false;
+                    btn.style.color = originalColor;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

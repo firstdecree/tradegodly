@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seasonality Charts - TradeGodly</title>
+         <meta property="og:url" content="https://tradegodly.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <meta property="og:title" content="Seasonality Charts - TradeGodly">
+    <meta property="og:image" content="assets/img/logo.png">
+    <meta name="theme-color" content="#00008B">
+    <meta name="description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        /* ── Tokens ── */
+        :root {
+            --bg: #0e1117;
+            --surface: #161b27;
+            --surface-2: #1c2333;
+            --border: #1e2a3a;
+            --text: #e2e8f0;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
+            --accent: #3b82f6;
+            --accent-dim: rgba(59, 130, 246, 0.12);
+            --green: #22c55e;
+            --radius: 8px;
+            --transition: 0.18s ease;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            height: 58px;
+            background: rgba(14, 17, 23, 0.92);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 24px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-brand {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .user-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .user-dropdown-btn:hover .username {
+            color: var(--accent);
+        }
+
+        .username {
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color var(--transition);
+        }
+
+        .profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            min-width: 150px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 200;
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: block;
+            text-align: left;
+            border: none;
+            background: transparent;
+            width: 100%;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: var(--border);
+        }
+
+        /* ── LAYOUT ── */
+        .layout-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .layout-body {
+                display: block;
+                overflow: visible;
+            }
+            body {
+                overflow-y: auto;
+                height: auto;
+            }
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 240px;
+            background: var(--bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0.75rem;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            color: var(--text);
+            background: var(--surface-2);
+        }
+
+        .sidebar-link.active {
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .sidebar-link svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        .hr {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0.5rem;
+        }
+
+        /* SIDEBAR DROPDOWN */
+        .sidebar-dropdown-btn {
+            justify-content: space-between;
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+        }
+
+        .sidebar-dropdown-btn .left-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chevron {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s;
+        }
+
+        .sidebar-dropdown-menu {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            padding-left: 26px;
+            margin-top: 4px;
+        }
+
+        .sidebar-dropdown-menu.show {
+            display: flex;
+        }
+
+        .sidebar-dropdown-btn.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .seasonality-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .seasonality-table {
+                min-width: 800px;
+            }
+        }
+
+        /* ── SEASONALITY CHART SPECIFIC ── */
+        .seasonality-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .seasonality-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .seasonality-table th {
+            background: var(--surface-2);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 1rem 0.5rem;
+            border-bottom: 1px solid var(--border);
+            letter-spacing: 0.03em;
+        }
+
+        .seasonality-table td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        .seasonality-table .year-cell {
+            background: var(--surface-2);
+            color: var(--text);
+            font-weight: 700;
+            text-align: left;
+            padding-left: 1.5rem;
+            width: 120px;
+        }
+
+        .pnl-cell {
+            transition: background 0.2s;
+        }
+
+        .pnl-cell:hover {
+            filter: brightness(1.1);
+        }
+
+        .pnl-positive {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .pnl-negative {
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.05);
+        }
+        
+        .pnl-neutral {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .text-green { color: #4ade80 !important; }
+        .text-red { color: #f87171 !important; }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="/" class="nav-left">
+            <div class="nav-logo">
+                <img src="/assets/img/logo.png" alt="TradeGodly"
+                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='" />
+            </div>
+            <span class="nav-brand">TradeGodly</span>
+        </a>
+
+        <div class="nav-right">
+            <button class="user-dropdown-btn" id="user-menu-btn" aria-haspopup="true" aria-expanded="false">
+                <span class="username" style="font-weight: bold;">
+                    <%= username.charAt(0).toUpperCase() + username.slice(1) %>
+                </span>
+                <img src="<%= typeof user !== 'undefined' && user.avatar ? user.avatar : '/assets/img/logo.png' %>"
+                    alt="Profile" class="profile-pic"
+                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='" />
+            </button>
+            <div class="dropdown-menu" id="user-dropdown">
+                <a href="#" class="dropdown-item" onclick="if(confirm('Are you sure you want to delete your account? This action is IRREVERSIBLE and will delete all your data.')) window.location.href='/delete-account'; return false;" style="color: #f87171;">Delete Account</a>
+                <a href="/logout" class="dropdown-item">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout-body">
+        <%- include('partials/sidebar') %>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.4rem;">Seasonality Chart</h1>
+            </div>
+
+            <div class="seasonality-wrapper">
+                <table class="seasonality-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; padding-left: 1.5rem;">Year</th>
+                            <th>Jan</th>
+                            <th>Feb</th>
+                            <th>Mar</th>
+                            <th>Apr</th>
+                            <th>May</th>
+                            <th>Jun</th>
+                            <th>Jul</th>
+                            <th>Aug</th>
+                            <th>Sep</th>
+                            <th>Oct</th>
+                            <th>Nov</th>
+                            <th>Dec</th>
+                        </tr>
+                    </thead>
+                    <tbody id="seasonalityBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Dropdown toggle
+        const userBtn = document.getElementById('user-menu-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+        userBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+        });
+        document.addEventListener('click', () => userDropdown.classList.remove('show'));
+
+        const tradesDropdownBtn = document.getElementById('trades-dropdown-btn');
+        const tradesMenu = document.getElementById('trades-menu');
+        if (tradesDropdownBtn) {
+            tradesDropdownBtn.addEventListener('click', () => {
+                tradesDropdownBtn.classList.toggle('open');
+                tradesMenu.classList.toggle('show');
+                tradesDropdownBtn.querySelector('.chevron').style.transform = tradesMenu.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+            });
+        }
+
+        // Seasonality Logic
+        const _tradesRaw = <%- JSON.stringify(typeof allTrades !== 'undefined' ? allTrades : []) %>;
+
+        // Process data
+        const seasonalityData = {}; // year -> monthIndex -> {pnl, count}
+
+        _tradesRaw.forEach(t => {
+            if (!t.date) return;
+            let dt = new Date(t.date);
+            if (isNaN(dt)) return;
+
+            const year = dt.getFullYear();
+            const month = dt.getMonth();
+
+            if (!seasonalityData[year]) {
+                seasonalityData[year] = {};
+                for (let i = 0; i < 12; i++) {
+                    seasonalityData[year][i] = { pnl: 0, count: 0 };
+                }
+            }
+
+            let ret = parseFloat(t.ret) || 0;
+            if (t.status === "LOSE") ret = -Math.abs(ret);
+            else if (t.status === "WIN") ret = Math.abs(ret);
+
+            seasonalityData[year][month].pnl += ret;
+            seasonalityData[year][month].count += 1;
+        });
+
+        const sortedYears = Object.keys(seasonalityData).sort((a, b) => b - a);
+        const tbody = document.getElementById('seasonalityBody');
+
+        if (sortedYears.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="13" style="padding: 2rem; color: var(--text-dim);">No trades found recorded yet.</td></tr>`;
+        } else {
+            sortedYears.forEach(year => {
+                let rowHtml = `<td class="year-cell">${year}</td>`;
+                for (let m = 0; m < 12; m++) {
+                    const data = seasonalityData[year][m];
+                    const pnlValue = data.pnl;
+                    let displayValue = "";
+                    let cellClass = "pnl-cell ";
+
+                    if (data.count > 0) {
+                        displayValue = (pnlValue >= 0 ? "+" : "-") + "$" + Math.abs(pnlValue).toFixed(0);
+                        if (pnlValue > 0) cellClass += "pnl-positive";
+                        else if (pnlValue < 0) cellClass += "pnl-negative";
+                    } else {
+                        displayValue = "-";
+                        cellClass += "pnl-neutral";
+                    }
+
+                    rowHtml += `<td class="${cellClass}">${displayValue}</td>`;
+                }
+                tbody.innerHTML += `<tr>${rowHtml}</tr>`;
+            });
+        }
+    </script>
+</body>
+
+</html>

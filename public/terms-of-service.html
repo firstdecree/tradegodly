@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terms of Service - TradeGodly</title>
+         <meta property="og:url" content="https://tradegodly.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <meta property="og:title" content="Terms of Service - TradeGodly">
+    <meta property="og:image" content="assets/img/logo.png">
+    <meta name="theme-color" content="#00008B">
+    <meta name="description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0e1117;
+            --surface: #161b27;
+            --surface-2: #1c2333;
+            --border: #1e2a3a;
+            --text: #e2e8f0;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
+            --accent: #3b82f6;
+            --accent-dim: rgba(59, 130, 246, 0.12);
+            --green: #22c55e;
+            --radius: 8px;
+            --transition: 0.18s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        #lightning-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+
+        .page-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            height: 58px;
+            background: rgba(14, 17, 23, 0.92);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .nav-brand {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.01em;
+            flex: 1;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .nav-logo img {
+            height: 30px;
+            width: auto;
+            object-fit: contain;
+            opacity: 0.92;
+        }
+
+        .nav-cta {
+            display: flex;
+            justify-content: flex-end;
+            flex: 1;
+        }
+
+        .btn-nav-cta {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text);
+            text-decoration: none;
+            padding: 7px 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            transition: all var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-nav-cta:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        /* Policy specific styles */
+        .policy-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 120px 2rem 80px;
+        }
+
+        .page-header {
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .content-row {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .main-content {
+            color: var(--text-dim);
+        }
+
+        .policy-section {
+            margin-bottom: 3.5rem;
+            scroll-margin-top: 100px;
+        }
+
+        .policy-section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .policy-section p {
+            margin-bottom: 1.2rem;
+            line-height: 1.7;
+        }
+
+        .toc-column {
+            position: sticky;
+            top: 100px;
+        }
+
+        .toc-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+        }
+
+        .toc-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .toc-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .toc-link {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all var(--transition);
+            display: block;
+            border-left: 2px solid transparent;
+            padding-left: 12px;
+        }
+
+        .toc-link:hover {
+            color: var(--text);
+            padding-left: 16px;
+        }
+
+        .toc-link.active {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            padding-left: 16px;
+        }
+
+        /* Footer matches index.html */
+        footer {
+            margin-top: 5rem;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .footer-inner {
+            max-width: 1060px;
+            margin: 0 auto;
+            padding: 48px 2rem 0;
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 2.4rem;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .footer-brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            margin-bottom: 0.9rem;
+        }
+
+        .footer-brand-logo img {
+            height: 24px;
+            opacity: 0.85;
+        }
+
+        .footer-brand-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .footer-brand-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+            max-width: 240px;
+            margin-bottom: 1.2rem;
+        }
+
+        .footer-col h4 {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+
+        .footer-col ul li a {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--text);
+        }
+
+        .footer-bottom {
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .footer-copy {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 900px) {
+            .content-row {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .toc-column {
+                display: none;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .footer-brand {
+                grid-column: 1 / -1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="lightning-canvas" aria-hidden="true"></canvas>
+
+    <div class="page-content">
+        <nav>
+            <a href="/" class="nav-brand">TradeGodly</a>
+            <div class="nav-logo">
+                <a href="/" aria-label="TradeGodly Home">
+                    <img src="assets/img/logo.png" alt="TradeGodly Logo" />
+                </a>
+            </div>
+            <div class="nav-cta">
+                <a href="/login" class="btn-nav-cta">Get Started</a>
+            </div>
+        </nav>
+
+        <main class="policy-wrapper">
+            <header class="page-header">
+                <h1>Terms of Service</h1>
+                <p class="page-subtitle">Last updated: March 30, 2026</p>
+            </header>
+
+            <div class="content-row">
+                <div class="main-content">
+                    <section id="agreement" class="policy-section">
+                        <h2>1. Agreement to Terms</h2>
+                        <p>By accessing or using TradeGodly, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service.</p>
+                    </section>
+
+                    <section id="user-conduct" class="policy-section">
+                        <h2>2. User Conduct & Abuse</h2>
+                        <p>We believe in maintaining a healthy and safe environment for all traders. Accordingly, we do not tolerate any form of: </p>
+                        <p>• <strong>Abuse:</strong> Harassment, threats, or intimidation of any kind.<br>
+                           • <strong>Spamming:</strong> Sending unsolicited messages, excessive content, or automated bot traffic.<br>
+                           • <strong>Exploitation:</strong> Attempting to reverse engineer, scrape, or perform unauthorized attacks on our infrastructure.</p>
+                        <p>Violation of these conduct rules will result in immediate and permanent account suspension without prior notice.</p>
+                    </section>
+
+                    <section id="account-security" class="policy-section">
+                        <h2>3. Account Security</h2>
+                        <p>You are responsible for maintaining the confidentiality of your login credentials. You agree to notify us immediately of any unauthorized use of your account.</p>
+                    </section>
+
+                    <section id="service-limits" class="policy-section">
+                        <h2>4. Service Limitations</h2>
+                        <p>While we strive to provide the most accurate analysis, TradeGodly and its AI components provide suggestions and journal features only. We do not provide financial advice. Trading involves substantial risk, and the user is solely responsible for their financial decisions.</p>
+                    </section>
+
+                    <section id="intellectual-property" class="policy-section">
+                        <h2>5. Intellectual Property</h2>
+                        <p>The service and its original content (excluding user-submitted trade data) are the exclusive property of The First Decree. Our trademarks and design elements may not be used without prior written permission.</p>
+                    </section>
+
+                    <section id="liability" class="policy-section">
+                        <h2>6. Limitation of Liability</h2>
+                        <p>To the maximum extent permitted by law, TradeGodly shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or trading losses.</p>
+                    </section>
+
+                    <section id="modifications" class="policy-section">
+                        <h2>7. Modifications</h2>
+                        <p>We reserve the right to modify these terms at any time. We will notify users of any significant changes by updating the "Last Updated" date at the top of this page.</p>
+                    </section>
+                </div>
+
+                <div class="toc-column">
+                    <aside class="toc-card">
+                        <div class="toc-title">On this page</div>
+                        <ul class="toc-list" id="tocList">
+                            <li><a href="#agreement" class="toc-link active">1. Agreement to Terms</a></li>
+                            <li><a href="#user-conduct" class="toc-link">2. User Conduct & Abuse</a></li>
+                            <li><a href="#account-security" class="toc-link">3. Account Security</a></li>
+                            <li><a href="#service-limits" class="toc-link">4. Service Limitations</a></li>
+                            <li><a href="#intellectual-property" class="toc-link">5. Intellectual Property</a></li>
+                            <li><a href="#liability" class="toc-link">6. Limitation of Liability</a></li>
+                            <li><a href="#modifications" class="toc-link">7. Modifications</a></li>
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-inner">
+                <div class="footer-top">
+                    <div class="footer-brand">
+                        <a href="/" class="footer-brand-logo">
+                            <img src="assets/img/logo.png" alt="TradeGodly" />
+                            <span class="footer-brand-name">TradeGodly</span>
+                        </a>
+                        <p class="footer-brand-desc">
+                            Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.
+                        </p>
+                    </div>
+
+                    <div class="footer-col">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="/#about">About</a></li>
+                            <li><a href="/#features">Features</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="/terms-of-service">Terms of Service</a></li>
+                            <li><a href="/privacy-policy">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p class="footer-copy">© 2026 The First Decree. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Lightning Effect
+        (function () {
+            const canvas = document.getElementById("lightning-canvas")
+            const ctx = canvas.getContext("2d")
+            let W, H, frameCount = 0
+            let bolts = []
+
+            function resize() {
+                W = canvas.width = window.innerWidth
+                H = canvas.height = window.innerHeight
+            }
+            resize()
+            window.addEventListener("resize", resize, { passive: true })
+
+            function generateBolt(x1, y1, x2, y2, roughness, depth) {
+                if (depth <= 0) return [{ x: x1, y: y1 }, { x: x2, y: y2 }]
+                const mx = (x1 + x2) / 2 + (Math.random() - 0.5) * roughness
+                const my = (y1 + y2) / 2 + (Math.random() - 0.5) * roughness
+                const left = generateBolt(x1, y1, mx, my, roughness / 1.7, depth - 1)
+                const right = generateBolt(mx, my, x2, y2, roughness / 1.7, depth - 1)
+                return [...left.slice(0, -1), { x: mx, y: my }, ...right.slice(1)]
+            }
+
+            function newBolt() {
+                const startX = Math.random() * W
+                const startY = Math.random() * H * 0.45
+                const endX = startX + (Math.random() - 0.5) * 420
+                const endY = startY + 160 + Math.random() * 300
+                return {
+                    pts: generateBolt(startX, startY, endX, endY, 140, 5),
+                    life: 0,
+                    maxLife: 16 + Math.floor(Math.random() * 12),
+                    width: 0.5 + Math.random() * 1,
+                }
+            }
+
+            function drawBolt(b) {
+                const p = b.life / b.maxLife
+                const a = p < 0.15 ? p / 0.15 : 1 - ((p - 0.15) / 0.85)
+                ctx.save()
+                ctx.globalAlpha = a * 0.6
+                ctx.beginPath()
+                ctx.moveTo(b.pts[0].x, b.pts[0].y)
+                for (let i = 1; i < b.pts.length; i++) ctx.lineTo(b.pts[i].x, b.pts[i].y)
+                ctx.strokeStyle = "rgba(59,130,246,0.7)"
+                ctx.lineWidth = b.width * 4
+                ctx.shadowBlur = 12
+                ctx.shadowColor = "rgba(59,130,246,0.4)"
+                ctx.stroke()
+                ctx.strokeStyle = "rgba(147,197,253,0.9)"
+                ctx.lineWidth = b.width
+                ctx.stroke()
+                ctx.restore()
+            }
+
+            function tick() {
+                ctx.clearRect(0, 0, W, H)
+                frameCount++
+                if (frameCount % 8 === 0 && bolts.length < 5) bolts.push(newBolt())
+                bolts = bolts.filter(b => b.life < b.maxLife)
+                for (const b of bolts) { drawBolt(b); b.life++; }
+                requestAnimationFrame(tick)
+            }
+            tick()
+        })();
+
+        // Scroll highlight
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.policy-section');
+            const navLinks = document.querySelectorAll('.toc-link');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= (sectionTop - 150)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

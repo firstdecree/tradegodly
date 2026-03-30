@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar - TradeGodly</title>
+         <meta property="og:url" content="https://tradegodly.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <meta property="og:title" content="Calendar - TradeGodly">
+    <meta property="og:image" content="assets/img/logo.png">
+    <meta name="theme-color" content="#00008B">
+    <meta name="description"
+        content="Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.">
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        /* ── Tokens ── */
+        :root {
+            --bg: #0e1117;
+            --surface: #161b27;
+            --surface-2: #1c2333;
+            --border: #1e2a3a;
+            --text: #e2e8f0;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
+            --accent: #3b82f6;
+            --accent-dim: rgba(59, 130, 246, 0.12);
+            --green: #22c55e;
+            --radius: 8px;
+            --transition: 0.18s ease;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            height: 58px;
+            background: rgba(14, 17, 23, 0.92);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 24px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-brand {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .user-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .user-dropdown-btn:hover .username {
+            color: var(--accent);
+        }
+
+        .username {
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color var(--transition);
+        }
+
+        .profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            min-width: 150px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 200;
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: block;
+            text-align: left;
+            border: none;
+            background: transparent;
+            width: 100%;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: var(--border);
+        }
+
+        /* ── LAYOUT ── */
+        .layout-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .layout-body {
+                display: block;
+                overflow: visible;
+            }
+            body {
+                overflow-y: auto;
+                height: auto;
+            }
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 240px;
+            background: var(--bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1rem 0.75rem;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .account-select-wrapper {
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+        }
+
+        .account-select {
+            width: 100%;
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+            font-family: inherit;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .account-select:focus {
+            border-color: var(--accent);
+        }
+
+        .account-select:invalid {
+            color: var(--text-dim);
+        }
+
+        .sidebar-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            color: var(--text);
+            background: var(--surface-2);
+        }
+
+        .sidebar-link.active {
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .sidebar-link svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        .hr {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0.5rem;
+        }
+
+        /* SIDEBAR DROPDOWN */
+        .sidebar-dropdown-btn {
+            justify-content: space-between;
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+        }
+
+        .sidebar-dropdown-btn .left-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chevron {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s;
+        }
+
+        .sidebar-dropdown-menu {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            padding-left: 26px;
+            margin-top: 4px;
+        }
+
+        .sidebar-dropdown-menu.show {
+            display: flex;
+        }
+
+        .sidebar-dropdown-btn.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .calendar-header-bar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+                text-align: center;
+            }
+            .calendar-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .calendar-grid {
+                min-width: 700px; /* Force minimum width to enable scroll */
+            }
+        }
+
+        /* ── CALENDAR SPECIFIC ── */
+        .calendar-header-bar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .calendar-nav-btn {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: var(--radius);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background var(--transition);
+        }
+
+        .calendar-nav-btn:hover {
+            background: var(--border);
+        }
+
+        .current-month-year {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .calendar-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            border-top: 1px solid var(--border);
+            border-left: 1px solid var(--border);
+        }
+
+        .calendar-day-header {
+            background: var(--surface-2);
+            padding: 0.75rem;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .calendar-day {
+            background: var(--surface);
+            min-height: 120px;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            transition: background var(--transition);
+        }
+
+        .calendar-day:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .calendar-day.profit {
+            background-color: rgba(34, 197, 94, 0.06);
+        }
+
+        .calendar-day.profit:hover {
+            background-color: rgba(34, 197, 94, 0.12);
+        }
+
+        .calendar-day.loss {
+            background-color: rgba(248, 113, 113, 0.06);
+        }
+
+        .calendar-day.loss:hover {
+            background-color: rgba(248, 113, 113, 0.12);
+        }
+
+        .calendar-day.empty {
+            background: rgba(30, 42, 58, 0.15);
+            /* darker background for out-of-month days */
+        }
+
+        .day-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+            align-self: flex-end;
+        }
+
+        .calendar-day.empty .day-number {
+            display: none;
+        }
+
+        .day-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .day-pnl {
+            font-size: 1.15rem;
+            font-weight: 700;
+            text-align: center;
+            word-break: break-all;
+        }
+
+        .day-trades-count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .text-green {
+            color: #4ade80;
+        }
+
+        .text-red {
+            color: #f87171;
+        }
+
+        /* Monthly Stats Card Styling */
+        .stats-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .stats-value {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="/" class="nav-left">
+            <div class="nav-logo">
+                <img src="/assets/img/logo.png" alt="TradeGodly"
+                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='" />
+            </div>
+            <span class="nav-brand">TradeGodly</span>
+        </a>
+
+        <div class="nav-right">
+            <button class="user-dropdown-btn" id="user-menu-btn" aria-haspopup="true" aria-expanded="false">
+                <span class="username" style="font-weight: bold;">
+                    <%= username.charAt(0).toUpperCase() + username.slice(1) %>
+                </span>
+                <img src="<%= typeof user !== 'undefined' && user.avatar ? user.avatar : '/assets/img/logo.png' %>"
+                    alt="Profile" class="profile-pic"
+                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzMzMyIvPjwvc3ZnPg=='" />
+            </button>
+            <div class="dropdown-menu" id="user-dropdown">
+                <a href="#" class="dropdown-item" onclick="if(confirm('Are you sure you want to delete your account? This action is IRREVERSIBLE and will delete all your data.')) window.location.href='/delete-account'; return false;" style="color: #f87171;">Delete Account</a>
+                <a href="/logout" class="dropdown-item">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout-body">
+        <%- include('partials/sidebar') %>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.4rem;">Calendar</h1>
+            </div>
+
+            <div class="calendar-header-bar">
+                <button class="calendar-nav-btn" id="prevMonthBtn">&larr; Prev</button>
+                <div class="current-month-year" id="currentMonthYear">Month Year</div>
+                <button class="calendar-nav-btn" id="nextMonthBtn">Next &rarr;</button>
+            </div>
+
+            <!-- Monthly Stats Row -->
+            <div id="monthlyStatsContainer" style="display: flex; gap: 1.25rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <!-- Filled dynamically by JavaScript -->
+            </div>
+
+            <div class="calendar-wrapper">
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Calendar Days will be populated here via JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // User Dropdown toggle
+        const userBtn = document.getElementById('user-menu-btn');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        userBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+            userBtn.setAttribute('aria-expanded', userDropdown.classList.contains('show'));
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!userBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.remove('show');
+                userBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Account/Trades Sidebar logic is now handled universally inside partials/sidebar.ejs
+
+
+        // Calendar Logic
+        const _tradesRaw = <%- JSON.stringify(typeof allTrades !== 'undefined' ? allTrades : []) %>;
+
+        // Group trades by date
+        const tradesByDate = {};
+        _tradesRaw.forEach(t => {
+            if (!t.date) return;
+
+            // Extract YYYY-MM-DD from the trade's date. 
+            // Creates real UTC date instance to handle standard formats seamlessly.
+            let dt = new Date(t.date);
+            if (isNaN(dt)) return;
+
+            const dStr = dt.toISOString().split('T')[0];
+
+            if (!tradesByDate[dStr]) {
+                tradesByDate[dStr] = { pnl: 0, count: 0, wins: 0, losses: 0 };
+            }
+
+            let ret = parseFloat(t.ret) || 0;
+            // Make sure Loses reflect negative PNL properly
+            if (t.status === "LOSE") {
+                ret = -Math.abs(ret);
+                tradesByDate[dStr].losses += 1;
+            } else if (t.status === "WIN") {
+                ret = Math.abs(ret);
+                tradesByDate[dStr].wins += 1;
+            }
+
+            tradesByDate[dStr].pnl += ret;
+            tradesByDate[dStr].count += 1;
+        });
+
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        function renderCalendar(m, y) {
+            document.getElementById('currentMonthYear').textContent = `${monthNames[m]} ${y}`;
+
+            // Calculate Monthly Stats
+            let mWins = 0, mLosses = 0, mSumWin = 0, mSumLoss = 0, mTotal = 0;
+            _tradesRaw.forEach(t => {
+                let dt = new Date(t.date);
+                if (isNaN(dt)) return;
+                if (dt.getMonth() === m && dt.getFullYear() === y) {
+                    mTotal++;
+                    let ret = parseFloat(t.ret) || 0;
+                    if (t.status === "WIN") { mWins++; mSumWin += Math.abs(ret); }
+                    else if (t.status === "LOSE") { mLosses++; mSumLoss += Math.abs(ret); }
+                }
+            });
+
+            const mWinrate = (mWins + mLosses) > 0 ? ((mWins / (mWins + mLosses)) * 100).toFixed(0) : 0;
+            const mAvgWin = mWins > 0 ? (mSumWin / mWins).toFixed(2) : "0.00";
+            const mAvgLoss = mLosses > 0 ? (mSumLoss / mLosses).toFixed(2) : "0.00";
+
+            document.getElementById('monthlyStatsContainer').innerHTML = `
+                <div class="stats-card">
+                    <span class="stats-label">Winrate</span>
+                    <span class="stats-value" style="color: var(--accent);">${mWinrate}%</span>
+                </div>
+                <div class="stats-card">
+                    <span class="stats-label">Avg Win</span>
+                    <span class="stats-value text-green">+$${mAvgWin}</span>
+                </div>
+                <div class="stats-card">
+                    <span class="stats-label">Avg Loss</span>
+                    <span class="stats-value text-red">-$${mAvgLoss}</span>
+                </div>
+                <div class="stats-card">
+                    <span class="stats-label">Total Trades</span>
+                    <span class="stats-value">${mTotal}</span>
+                </div>
+            `;
+
+            const firstDay = new Date(y, m, 1).getDay(); // 0 is Sunday
+            const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+
+            // Header row (Sun - Sat)
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(d => {
+                grid.innerHTML += `<div class="calendar-day-header">${d}</div>`;
+            });
+
+            // Empty slots for previous month
+            for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += `<div class="calendar-day empty"></div>`;
+            }
+
+            // Days of the month
+            for (let i = 1; i <= daysInMonth; i++) {
+                const mStr = String(m + 1).padStart(2, '0');
+                const dStr = String(i).padStart(2, '0');
+                const dateKey = `${y}-${mStr}-${dStr}`; // Format: YYYY-MM-DD
+
+                let contentHtml = '';
+                let dayAddedClass = '';
+
+                if (tradesByDate[dateKey]) {
+                    const data = tradesByDate[dateKey];
+                    const pnlClass = data.pnl >= 0 ? 'text-green' : 'text-red';
+
+                    if (data.pnl > 0) dayAddedClass = 'profit';
+                    else if (data.pnl < 0) dayAddedClass = 'loss';
+
+                    const sign = data.pnl >= 0 ? '+' : '';
+                    const winrate = data.count > 0 ? ((data.wins / data.count) * 100).toFixed(0) : 0;
+                    contentHtml = `
+                        <div class="day-pnl ${pnlClass}">${sign}$${Math.abs(data.pnl).toFixed(2)}</div>
+                        <div style="font-size: 0.72rem; color: var(--text-dim); font-weight: 600;">${winrate}% WR</div>
+                        <div class="day-trades-count">${data.count} Trade${data.count > 1 ? 's' : ''}</div>
+                    `;
+                }
+
+                grid.innerHTML += `
+                    <div class="calendar-day ${dayAddedClass}">
+                        <span class="day-number">${i}</span>
+                        <div class="day-content">${contentHtml}</div>
+                    </div>
+                `;
+            }
+
+            // Empty slots for next month to finish the grid
+            const totalCells = firstDay + daysInMonth;
+            const remainder = totalCells % 7;
+            if (remainder > 0) {
+                for (let i = 0; i < (7 - remainder); i++) {
+                    grid.innerHTML += `<div class="calendar-day empty"></div>`;
+                }
+            }
+        }
+
+        renderCalendar(currentMonth, currentYear);
+
+        document.getElementById('prevMonthBtn').addEventListener('click', () => {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar(currentMonth, currentYear);
+        });
+
+        document.getElementById('nextMonthBtn').addEventListener('click', () => {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar(currentMonth, currentYear);
+        });
+    </script>
+
+</body>
+
+</html>
