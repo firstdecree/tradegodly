@@ -1,4 +1,4 @@
-<div align="center"><img src="./public/assets/img/favicon.png" width="155" height="155"></div>
+<div align="center"><img src="./banner.png"></div>
 
 # TradeGodly
 Journal your trades, learn from your mistakes, and grow effectively evolving from beginner to expert without ever worrying about your privacy.
