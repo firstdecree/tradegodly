@@ -1,0 +1,5 @@
+node_modules
+createLogin.js
+example.*
+notes.*.txt
+pnpm-lock.yaml

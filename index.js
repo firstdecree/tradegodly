@@ -379,7 +379,7 @@ Input Data/Message: ${data}`
         if (userData.account === "all") return res.send("0")
 
         // Variables
-        var { date, type, asset, session, status, qty, entry, exit, tp, sl, hold, ret, entryTime, exitTime, timeframe, timezone } = req.body
+        var { date, exitDate, type, asset, session, status, qty, entry, exit, tp, sl, ret, entryTime, exitTime, timeframe, timezone } = req.body
 
         // Validations
         if (!date || !type || !asset || !status || qty === undefined || entry === undefined || exit === undefined) return res.send("0")
@@ -390,14 +390,12 @@ Input Data/Message: ${data}`
         if (!["1m", "3m", "5m", "15m", "30m", "1h", "4h", "1d"].includes(timeframe)) timeframe = "1h"
 
         if (asset.length > 20 || /[^\w\s\-\/\.]/.test(asset)) return res.send("0")
-        if (hold && hold.length > 50) return res.send("0")
         if (timezone && timezone.length > 30) return res.send("0")
         if (entryTime && entryTime.length > 20) return res.send("0")
         if (exitTime && exitTime.length > 20) return res.send("0")
 
         // Sanitization
         asset = filterXSS(asset)
-        hold = filterXSS(hold || "")
         timezone = filterXSS(timezone || "UTC")
         entryTime = filterXSS(entryTime || "00:00:00")
         exitTime = filterXSS(exitTime || "00:00:00")
@@ -419,6 +417,7 @@ Input Data/Message: ${data}`
             owner: SHA512(userData.username),
             account: userData.account,
             date,
+            exitDate,
             type,
             asset,
             session,
@@ -428,7 +427,6 @@ Input Data/Message: ${data}`
             exit,
             tp,
             sl,
-            hold,
             ret,
             entryTime,
             exitTime,
@@ -525,7 +523,7 @@ Input Data/Message: ${data}`
         if (!userData) return res.send("0")
 
         // Variables
-        var { id, date, type, asset, session, status, qty, entry, exit, tp, sl, hold, ret, entryTime, exitTime, timeframe, timezone } = req.body
+        var { id, date, exitDate, type, asset, session, status, qty, entry, exit, tp, sl, ret, entryTime, exitTime, timeframe, timezone } = req.body
 
         // Validations
         if (!id || !date || !type || !asset || !status || qty === undefined || entry === undefined || exit === undefined) return res.send("0")
@@ -536,14 +534,12 @@ Input Data/Message: ${data}`
         if (!["1m", "3m", "5m", "15m", "30m", "1h", "4h", "1d"].includes(timeframe)) timeframe = "1h"
 
         if (asset.length > 20 || /[^\w\s\-\/\.]/.test(asset)) return res.send("0")
-        if (hold && hold.length > 50) return res.send("0")
         if (timezone && timezone.length > 30) return res.send("0")
         if (entryTime && entryTime.length > 20) return res.send("0")
         if (exitTime && exitTime.length > 20) return res.send("0")
 
         // Sanitization
         asset = filterXSS(asset)
-        hold = filterXSS(hold || "")
         timezone = filterXSS(timezone || "UTC")
         entryTime = filterXSS(entryTime || "00:00:00")
         exitTime = filterXSS(exitTime || "00:00:00")
@@ -562,7 +558,7 @@ Input Data/Message: ${data}`
                 { _id: new ObjectId(id), owner: SHA512(userData.username) },
                 {
                     $set: {
-                        date, type, asset, session, status, qty, entry, exit, tp, sl, hold, ret,
+                        date, exitDate, type, asset, session, status, qty, entry, exit, tp, sl, ret,
                         entryTime, exitTime, timeframe, timezone
                     }
                 }
@@ -1099,6 +1095,7 @@ Make sure the total response uses the delimiter "|||" strictly between the three
 
             userData.trade = tradeData
             userData.ai = await promptAI("trade", accountData.rules || [], accountData.strategies || [], JSON.stringify(tradeData), recentTrades)
+            userData.hideAccountSelect = true
             res.render("trade", userData)
         } catch {
             res.redirect("/dashboard")

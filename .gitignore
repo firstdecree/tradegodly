@@ -3,3 +3,5 @@ config.toml
 pnpm-lock.yaml
 notes.*.txt
 createLogin.js
+.vercel
+vercel-prod

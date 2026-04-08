@@ -20,7 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
     <style>
-        /* ── Tokens ── */
+
         :root {
             --bg: #0e1117;
             --surface: #161b27;
@@ -55,7 +55,7 @@
             font-size: 14px;
         }
 
-        /* ── NAVBAR ── */
+
         nav {
             height: 58px;
             background: rgba(14, 17, 23, 0.92);
@@ -162,7 +162,7 @@
             background: var(--border);
         }
 
-        /* ── LAYOUT ── */
+
         .layout-body {
             display: flex;
             flex: 1;
@@ -180,7 +180,7 @@
             }
         }
 
-        /* ── SIDEBAR ── */
+
         .sidebar {
             width: 240px;
             background: var(--bg);
@@ -269,7 +269,7 @@
             margin: 12px 0.5rem;
         }
 
-        /* SIDEBAR DROPDOWN */
+
         .sidebar-dropdown-btn {
             justify-content: space-between;
             width: 100%;
@@ -306,7 +306,7 @@
             transform: rotate(180deg);
         }
 
-        /* MAIN CONTENT */
+
         .main-content {
             flex: 1;
             padding: 2rem;
@@ -410,7 +410,7 @@
             font-weight: 600;
         }
 
-        /* MODAL STYLES */
+
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -579,7 +579,7 @@
 
 <body>
 
-    <!-- NAVBAR -->
+
     <nav>
         <a href="/" class="nav-left">
             <div class="nav-logo">
@@ -608,7 +608,7 @@
     <div class="layout-body">
         <%- include('partials/sidebar') %>
 
-        <!-- MAIN CONTENT -->
+
         <main class="main-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                 <h1 style="font-size: 1.4rem;">Trades</h1>
@@ -626,7 +626,8 @@
                 <table class="trades-table">
                     <thead>
                         <tr>
-                            <th>Date</th>
+                            <th>Entry Date</th>
+                            <th>Exit Date</th>
                             <th>Type</th>
                             <th>Asset</th>
                             <th>Status</th>
@@ -635,7 +636,6 @@
                             <th>Exit</th>
                             <th>TP</th>
                             <th>SL</th>
-                            <th>Hold</th>
                             <th>Ret</th>
                             <th>%</th>
                             <th style="text-align: right;">Action</th>
@@ -647,6 +647,10 @@
                                 <tr onclick="window.location.href='/trade/<%= trade._id %>'">
                                     <td>
                                         <%= new Date(trade.date).toLocaleDateString('en-US', { month: 'short' ,
+                                            day: 'numeric' , timeZone: 'UTC' }) %>
+                                    </td>
+                                    <td>
+                                        <%= new Date(trade.exitDate || trade.date).toLocaleDateString('en-US', { month: 'short' ,
                                             day: 'numeric' , timeZone: 'UTC' }) %>
                                     </td>
                                     <td><span class="badge <%= trade.type.toLowerCase() %>">
@@ -668,9 +672,6 @@
                                     <td>$<%= parseFloat(trade.tp).toFixed(2) %>
                                     </td>
                                     <td>$<%= parseFloat(trade.sl).toFixed(2) %>
-                                    </td>
-                                    <td>
-                                        <%= trade.hold %>
                                     </td>
                                     <% let retVal=parseFloat(trade.ret) || 0; let isPositive=retVal>= 0;
                                         let colorClass = trade.status === "WIN" ? 'text-green' : 'text-red';
@@ -718,7 +719,7 @@
                     </tbody>
                 </table>
 
-                <!-- Pagination -->
+
                 <div class="pagination"
                     style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(30, 42, 58, 0.5);">
                     <span style="color: var(--text-muted); font-size: 0.85rem;">Showing <%= totalTrades> 0 ?
@@ -737,7 +738,7 @@
         </main>
     </div>
 
-    <!-- MODAL -->
+
     <div class="modal-overlay" id="addTradeModal">
         <div class="modal">
             <div class="modal-header">
@@ -753,7 +754,11 @@
             <form id="addTradeForm">
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Date</label>
+                        <label>Entry Date</label>
+                        <input type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Exit Date</label>
                         <input type="date" required>
                     </div>
                     <div class="form-group">
@@ -833,15 +838,9 @@
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Quantity</label>
-                        <input type="number" step="0.01" placeholder="e.g. 1.5" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Hold Duration (Date/Text)</label>
-                        <input type="text" placeholder="e.g. 2d, 4h, or date" required>
-                    </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" step="0.01" placeholder="e.g. 1.5" required>
                 </div>
 
                 <div class="form-row">
@@ -880,7 +879,7 @@
     </div>
 
     <script>
-        // User Dropdown toggle
+
         const userBtn = document.getElementById('user-menu-btn');
         const userDropdown = document.getElementById('user-dropdown');
 
@@ -890,7 +889,7 @@
             userBtn.setAttribute('aria-expanded', userDropdown.classList.contains('show'));
         });
 
-        // Close dropdown when clicking outside
+
         document.addEventListener('click', (e) => {
             if (!userBtn.contains(e.target) && !userDropdown.contains(e.target)) {
                 userDropdown.classList.remove('show');
@@ -899,7 +898,7 @@
         });
 
 
-        // Modal Logic
+
         const modal = document.getElementById('addTradeModal');
         const openBtn = document.querySelector('.add-trade-btn');
         const closeBtn = document.getElementById('closeModalBtn');
@@ -934,16 +933,16 @@
             const inputs = form.querySelectorAll('input, select');
             const formData = {
                 date: inputs[0].value,
-                entryTime: inputs[1].value,
-                exitTime: inputs[2].value,
-                timeframe: inputs[3].value,
-                asset: inputs[4].value,
-                session: inputs[5].value,
-                timezone: inputs[6].value,
-                type: inputs[7].value,
-                status: inputs[8].value,
-                qty: inputs[9].value,
-                hold: inputs[10].value,
+                exitDate: inputs[1].value,
+                entryTime: inputs[2].value,
+                exitTime: inputs[3].value,
+                timeframe: inputs[4].value,
+                asset: inputs[5].value,
+                session: inputs[6].value,
+                timezone: inputs[7].value,
+                type: inputs[8].value,
+                status: inputs[9].value,
+                qty: inputs[10].value,
                 entry: inputs[11].value,
                 exit: inputs[12].value,
                 tp: inputs[13].value,
@@ -973,7 +972,7 @@
             }
         });
 
-        // Delete Trade Logic
+
         document.querySelectorAll('.delete-trade-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = btn.getAttribute('data-id');

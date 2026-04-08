@@ -20,7 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
     <style>
-        /* ── Tokens ── */
+
         :root {
             --bg: #0e1117;
             --surface: #161b27;
@@ -56,7 +56,7 @@
             font-size: 14px;
         }
 
-        /* ── NAVBAR ── */
+
         nav {
             height: 58px;
             background: rgba(14, 17, 23, 0.92);
@@ -163,7 +163,7 @@
             background: var(--border);
         }
 
-        /* ── LAYOUT ── */
+
         .layout-body {
             display: flex;
             flex: 1;
@@ -181,7 +181,7 @@
             }
         }
 
-        /* ── SIDEBAR ── */
+
         .sidebar {
             width: 240px;
             background: var(--bg);
@@ -240,7 +240,7 @@
             margin: 12px 0.5rem;
         }
 
-        /* SIDEBAR DROPDOWN */
+
         .sidebar-dropdown-btn {
             justify-content: space-between;
             width: 100%;
@@ -277,7 +277,7 @@
             transform: rotate(180deg);
         }
 
-        /* MAIN CONTENT */
+
         .main-content {
             flex: 1;
             padding: 2rem;
@@ -449,7 +449,7 @@
             border-color: var(--accent);
         }
 
-        /* ── Markdown Styles ── */
+
         .markdown-body {
             line-height: 1.6;
             color: var(--text-dim);
@@ -515,7 +515,7 @@
 
 <body>
 
-    <!-- NAVBAR -->
+
     <nav>
         <a href="/" class="nav-left">
             <div class="nav-logo">
@@ -544,7 +544,7 @@
     <div class="layout-body">
         <%- include('partials/sidebar') %>
 
-        <!-- MAIN CONTENT -->
+
         <main class="main-content">
             <a href="/trades" class="back-btn">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -558,7 +558,7 @@
             <h1 style="margin-bottom: 2rem; font-size: 1.4rem;">Trade Overview</h1>
 
             <div class="grid-container">
-                <!-- Summary Card -->
+
                 <div class="info-card">
                     <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
@@ -593,7 +593,7 @@
                     </div>
                 </div>
 
-                <!-- Execution Details -->
+
                 <div class="info-card">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
@@ -606,9 +606,16 @@
                     </div>
                     <div id="executionView" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="info-group">
-                            <span class="info-label">Date</span>
+                            <span class="info-label">Entry Date</span>
                             <span class="info-value">
                                 <%= new Date(trade.date).toLocaleDateString('en-US', { month: 'long' , day: 'numeric' ,
+                                    year: 'numeric' , timeZone: 'UTC' }) %>
+                            </span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Exit Date</span>
+                            <span class="info-value">
+                                <%= new Date(trade.exitDate || trade.date).toLocaleDateString('en-US', { month: 'long' , day: 'numeric' ,
                                     year: 'numeric' , timeZone: 'UTC' }) %>
                             </span>
                         </div>
@@ -637,30 +644,48 @@
                             </span>
                         </div>
                         <div class="info-group">
-                            <span class="info-label">Quantity</span>
-                            <span class="info-value">
-                                <%= trade.qty %>
-                            </span>
-                        </div>
-                        <div class="info-group">
-                            <span class="info-label">Hold duration</span>
-                            <span class="info-value">
-                                <%= trade.hold %>
-                            </span>
-                        </div>
-                        <div class="info-group">
                             <span class="info-label">Session</span>
                             <span class="info-value">
                                 <%= trade.session || 'N/A' %>
+                            </span>
+                        </div>
+                        <% 
+                            const entryDateStr = trade.date && trade.date.includes('T') ? trade.date.split('T')[0] : trade.date;
+                            const exitDateStr = (trade.exitDate || trade.date) && (trade.exitDate || trade.date).includes('T') ? (trade.exitDate || trade.date).split('T')[0] : (trade.exitDate || trade.date);
+                            const entryFull = new Date(`${entryDateStr}T${trade.entryTime || '00:00:00'}Z`);
+                            const exitFull = new Date(`${exitDateStr}T${trade.exitTime || '00:00:00'}Z`);
+                            const diffMs = Math.max(0, exitFull - entryFull);
+                            
+                            const dDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                            const dHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const dMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                            const dSeconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+                            
+                            let holdTimeDisplay = "";
+                            if (dDays > 0) holdTimeDisplay += dDays + "d ";
+                            if (dHours > 0 || dDays > 0) holdTimeDisplay += dHours + "h ";
+                            if (dMinutes > 0 || dHours > 0 || dDays > 0) holdTimeDisplay += dMinutes + "m ";
+                            if (dDays === 0 && dHours === 0) holdTimeDisplay += dSeconds + "s";
+                            if (!holdTimeDisplay.trim()) holdTimeDisplay = "0s";
+                        %>
+                        <div class="info-group">
+                            <span class="info-label">Hold Time</span>
+                            <span class="info-value" style="color: var(--accent);">
+                                <%= holdTimeDisplay %>
                             </span>
                         </div>
                     </div>
                     <div id="executionEdit" style="display: none; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <input type="hidden" id="tradeId" value="<%= trade._id %>">
                         <div class="info-group">
-                            <span class="info-label">Date</span>
+                            <span class="info-label">Entry Date</span>
                             <input type="date" id="editDate" class="edit-input"
                                 value="<%= new Date(trade.date).toISOString().split('T')[0] %>">
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Exit Date</span>
+                            <input type="date" id="editExitDate" class="edit-input"
+                                value="<%= new Date(trade.exitDate || trade.date).toISOString().split('T')[0] %>">
                         </div>
                         <div class="info-group">
                             <span class="info-label">Entry Time</span>
@@ -696,10 +721,6 @@
                             <input type="number" step="0.01" id="editQty" class="edit-input" value="<%= trade.qty %>">
                         </div>
                         <div class="info-group">
-                            <span class="info-label">Hold duration</span>
-                            <input type="text" id="editHold" class="edit-input" value="<%= trade.hold %>">
-                        </div>
-                        <div class="info-group">
                             <span class="info-label">Session</span>
                             <select id="editSession" class="edit-input">
                                 <option value="Sydney" <%=trade.session==='Sydney' ? 'selected' : '' %>>Sydney</option>
@@ -712,7 +733,7 @@
                     </div>
                 </div>
 
-                <!-- Pricing Card -->
+
                 <div class="info-card">
                     <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -740,7 +761,7 @@
                     </div>
                 </div>
 
-                <!-- AI Summary Section -->
+
                 <div class="info-card notes-card"
                     style="margin-bottom: 2rem; border-color: var(--accent-dim); background: linear-gradient(145deg, rgba(59, 130, 246, 0.05) 0%, rgba(22, 27, 39, 0) 100%), var(--surface);">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
@@ -751,11 +772,11 @@
                         <h2 style="color: var(--accent); margin: 0; font-size: 1.1rem;">AI Trade Summary</h2>
                     </div>
                     <div id="aiSummaryContent" class="markdown-body">
-                        <!-- AI content will be rendered here -->
+
                     </div>
                 </div>
 
-                <!-- Trade Backtrack (Chart) -->
+
                 <div class="info-card notes-card" style="margin-bottom: 2rem;">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
@@ -790,7 +811,7 @@
                     </div>
                 </div>
 
-                <!-- Notes & Screenshots Card -->
+
                 <div class="info-card notes-card">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
@@ -879,7 +900,7 @@
         </main>
     </div>
 
-    <!-- Image Modal (Zoom) -->
+
     <div id="imageModal"
         style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
         <button id="closeImageModal"
@@ -916,7 +937,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
     <script>
-        // Trade Backtrack Analysis
+
         document.addEventListener('DOMContentLoaded', async () => {
             const container = document.getElementById('tv_chart_container');
             const assetName = '<%= trade.asset.toUpperCase() %>';
@@ -934,7 +955,7 @@
             const utcEntryTs = getTimestamp(tradeDateStr, entryTimeStr, timezoneStr);
             const utcExitTs = getTimestamp(tradeDateStr, exitTimeStr, timezoneStr);
 
-            // Parse User Timezone to get broker/display offset in seconds
+
             const parseTzOffset = (tz) => {
                 const match = tz.match(/UTC([+-])(\d+)(?::(\d+))?/);
                 if (match) {
@@ -943,7 +964,7 @@
                     const mins = parseInt(match[3] || "0");
                     return sign * (hours * 3600 + mins * 60);
                 }
-                return 0; // Default to UTC
+                return 0;
             };
             const displayOffset = parseTzOffset(timezoneStr);
 
@@ -953,7 +974,7 @@
             const slPrice = parseFloat('<%= trade.sl %>');
             const tradeStatus = '<%= trade.status %>';
 
-            // Create Chart
+
             const chart = LightweightCharts.createChart(container, {
                 layout: {
                     background: { color: '#0e1117' },
@@ -990,8 +1011,8 @@
                 const data = await response.json();
 
                 if (data && Array.isArray(data) && data.length > 0) {
-                    // Force the chart to show UTC labels by compensating for the browser's offset
-                    // If user browser is UTC+8, we shift the labels by -8h so UTC 5:00 shows as 5:00
+
+
                     const compensationShift = displayOffset;
 
                     const shiftedData = data.map(c => ({
@@ -1023,7 +1044,7 @@
 
                     candlestickSeries.setMarkers(markers);
 
-                    // Add Price Lines
+
                     if (!isNaN(entryPrice)) {
                         candlestickSeries.createPriceLine({
                             price: entryPrice,
@@ -1047,7 +1068,7 @@
 
                     if (shiftedData.length > 0) {
                         const targetTime = !isNaN(utcEntryTs) ? (utcEntryTs + compensationShift) : shiftedData[shiftedData.length - 1].time;
-                        // Find closest candle index for focusing
+
                         let closestIdx = 0;
                         let minDiff = Infinity;
                         shiftedData.forEach((c, i) => {
@@ -1073,7 +1094,7 @@
             });
         });
 
-        // Tab switching
+
         const previewBtn = document.getElementById('previewBtn');
         const editBtn = document.getElementById('editBtn');
         const editorContainer = document.getElementById('noteEditorContainer');
@@ -1113,19 +1134,19 @@
             noteTextarea.focus();
         });
 
-        // Initialize preview
+
         previewBtn.style.background = 'var(--accent)';
         previewBtn.style.color = '#fff';
         updatePreview();
 
-        // Render AI Summary
-        const aiRawMarkdown = `<%- ai.replace(/` / g, '\\`').replace(/\$/g, '\\$') %> `;
+
+        const aiRawMarkdown = <%- JSON.stringify(typeof ai !== "undefined" ? ai : "") %>;
         const aiSummaryContent = document.getElementById('aiSummaryContent');
         if (aiSummaryContent && aiRawMarkdown) {
             aiSummaryContent.innerHTML = marked.parse(aiRawMarkdown);
         }
 
-        // Auto-save logic
+
         let saveTimeout;
         noteTextarea.addEventListener('input', () => {
             saveStatus.innerText = 'Saving...';
@@ -1154,7 +1175,7 @@
             }
         }
 
-        // Screenshot management
+
         const uploadInput = document.getElementById('uploadScreenshot');
         const screenshotsGrid = document.getElementById('screenshotsGrid');
         const placeholder = document.getElementById('noScreenshotsPlaceholder');
@@ -1178,7 +1199,7 @@
                     });
                     
                     if (await res.text() === '1') {
-                        window.location.reload(); // Simple reload to refresh the grid
+                        window.location.reload();
                     } else {
                         alert('Error uploading screenshot.');
                     }
@@ -1190,7 +1211,7 @@
             reader.readAsDataURL(file);
         });
 
-        // Delete screenshot
+
         document.querySelectorAll('.delete-screenshot-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
@@ -1220,7 +1241,7 @@
             });
         });
 
-        // Image Zoom
+
         const imageModal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImg');
         const closeImageModal = document.getElementById('closeImageModal');
@@ -1261,7 +1282,7 @@
             }
         });
 
-        // User Dropdown toggle
+
         const userBtn = document.getElementById('user-menu-btn');
         const userDropdown = document.getElementById('user-dropdown');
         
@@ -1271,7 +1292,7 @@
             userBtn.setAttribute('aria-expanded', userDropdown.classList.contains('show'));
         });
 
-        // Close dropdown when clicking outside
+
         document.addEventListener('click', (e) => {
             if (!userBtn.contains(e.target) && !userDropdown.contains(e.target)) {
                 userDropdown.classList.remove('show');
@@ -1279,7 +1300,7 @@
             }
         });
 
-        // Execution Edit Logic
+
         const editExecutionBtn = document.getElementById('editExecutionBtn');
         const executionView = document.getElementById('executionView');
         const executionEdit = document.getElementById('executionEdit');
@@ -1287,14 +1308,14 @@
 
         editExecutionBtn.addEventListener('click', async () => {
             if (!isEditing) {
-                // Switch to edit mode
+
                 executionView.style.display = 'none';
                 executionEdit.style.display = 'grid';
                 editExecutionBtn.innerText = 'Save';
                 editExecutionBtn.classList.add('save');
                 isEditing = true;
             } else {
-                // Save and switch to view mode
+
                 editExecutionBtn.innerText = 'Saving...';
                 editExecutionBtn.disabled = true;
 
@@ -1303,12 +1324,12 @@
                     date: document.getElementById('editDate').value,
                     entryTime: document.getElementById('editEntryTime').value,
                     exitTime: document.getElementById('editExitTime').value,
+                    exitDate: document.getElementById('editExitDate').value,
                     timeframe: document.getElementById('editTimeframe').value,
                     timezone: document.getElementById('editTimezone').value,
                     qty: document.getElementById('editQty').value,
-                    hold: document.getElementById('editHold').value,
                     session: document.getElementById('editSession').value,
-                    // Preserve other fields
+
                     type: '<%= trade.type %>',
                     asset: '<%= trade.asset %>',
                     status: '<%= trade.status %>',
@@ -1341,10 +1362,7 @@
             }
         });
 
-        tradesDropdownBtn.addEventListener('click', () => {
-            tradesDropdownBtn.classList.toggle('open');
-            tradesMenu.classList.toggle('show');
-        });
+
     </script>
 </body>
 
