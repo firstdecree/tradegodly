@@ -20,7 +20,7 @@
         justify-content: center;
         transition: transform 0.2s;
     }
-    
+
     .sidebar-toggle-btn:active {
         transform: scale(0.9);
     }
@@ -32,12 +32,13 @@
 
         .sidebar {
             position: fixed;
-            top: 58px; /* Below Navbar */
+            top: 58px;
+            /* Below Navbar */
             left: -240px;
             bottom: 0;
             z-index: 900;
             transition: left 0.3s ease;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
             background: var(--bg) !important;
         }
 
@@ -53,7 +54,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 850;
             backdrop-filter: blur(2px);
         }
@@ -71,16 +72,19 @@
                 <option value="" disabled <%=typeof account !=='undefined' && account==='' ? 'selected' : '' %>>Select
                     an
                     account</option>
-                <option value="all" <%=typeof account !=='undefined' && account==='all' ? 'selected' : '' %>>All
-                    accounts
-                </option>
-                <% if (typeof accountsList !=='undefined' ) { %>
-                    <% accountsList.forEach(function(accountData) { %>
-                        <option value="<%= accountData %>" <%=typeof account !=='undefined' && account===accountData
-                            ? 'selected' : '' %>><%= accountData.charAt(0).toUpperCase() + accountData.slice(1) %>
-                        </option>
-                        <% }); %>
-                            <% } %>
+                <% if (typeof hideAllAccounts==='undefined' || !hideAllAccounts) { %>
+                    <option value="all" <%=typeof account !=='undefined' && account==='all' ? 'selected' : '' %>>All
+                        accounts
+                    </option>
+                    <% } %>
+                        <% if (typeof accountsList !=='undefined' ) { %>
+                            <% accountsList.forEach(function(accountData) { %>
+                                <option value="<%= accountData %>" <%=typeof account !=='undefined' &&
+                                    account===accountData ? 'selected' : '' %>><%= accountData.charAt(0).toUpperCase() +
+                                        accountData.slice(1) %>
+                                </option>
+                                <% }); %>
+                                    <% } %>
             </select>
         </div>
         <% } %>
@@ -190,7 +194,8 @@
 <div class="sidebar-overlay" id="global-sidebar-overlay"></div>
 
 <button class="sidebar-toggle-btn" id="global-sidebar-toggle">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
         <line x1="3" y1="12" x2="21" y2="12"></line>
         <line x1="3" y1="6" x2="21" y2="6"></line>
         <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -247,7 +252,7 @@
                 sidebar.classList.remove('show');
                 overlay.classList.remove('show');
             });
-            
+
             // Close sidebar when clicking a link on mobile
             document.querySelectorAll('#global-sidebar .sidebar-link:not(.sidebar-dropdown-btn)').forEach(link => {
                 link.addEventListener('click', () => {
